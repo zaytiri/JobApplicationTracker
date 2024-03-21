@@ -1,5 +1,6 @@
 
 const { BrowserWindow, app, ipcMain, Notification } = require('electron');
+var api = require('./api')
 const path = require('path');
 
 const isDev = !app.isPackaged;
@@ -30,4 +31,6 @@ ipcMain.on('notify', (_, message) => {
   new Notification({title: 'Notifiation', body: message}).show();
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(createWindow);
+
+api.start();
