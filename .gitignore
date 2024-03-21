@@ -127,10 +127,10 @@ dist
 .pnp.*
 
 # IntelliJ IDEA
-app\api\.gradle\
-app\api\.idea\
-app\api\gradle\
-app\api\build\
+app/api/.gradle/
+app/api/.idea/
+app/api/gradle/
+app/api/build/
 
 # Electron files
-app\ui\build\
+app/ui/build/
