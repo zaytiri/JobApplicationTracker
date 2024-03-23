@@ -1,6 +1,6 @@
 
 const { BrowserWindow, app, ipcMain, Notification } = require('electron');
-var api = require('./api')
+var api = require('../libraries/start_api')
 const path = require('path');
 
 const isDev = !app.isPackaged;
@@ -18,12 +18,12 @@ function createWindow() {
     }
   })
 
-  win.loadFile('index.html');
+  win.loadFile('src/app/main.html');
 }
 
 if (isDev) {
   require('electron-reload')(__dirname, {
-    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+    electron: path.join(__dirname, '..', '..','node_modules', '.bin', 'electron')
   })
 }
 

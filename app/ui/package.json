@@ -2,7 +2,7 @@
   "name": "job-applications-tracker",
   "version": "1.0.0",
   "description": "a job applications tracker integrated with sankeymatic.",
-  "main": "main.js",
+  "main": "src/app/main.js",
   "scripts": {
     "start": "electron .",
     "watch": "webpack --config webpack.common.js --watch"

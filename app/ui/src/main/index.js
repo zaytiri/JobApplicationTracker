@@ -1,7 +1,7 @@
 import React from "react";
-import { MyComponent } from "./api_calls";
+import { JobTracker } from "./job_tracker";
 
 import { createRoot } from 'react-dom/client';
 const container = document.getElementById('root');
 const root = createRoot(container);
-root.render(<MyComponent/>);
+root.render(<JobTracker/>);

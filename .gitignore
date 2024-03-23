@@ -134,3 +134,4 @@ app/api/build/
 
 # Electron files
 app/ui/build/
+/app/ui/external

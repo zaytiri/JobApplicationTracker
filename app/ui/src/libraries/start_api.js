@@ -5,9 +5,13 @@ function start() {
     var baseCommand = 'java';
     var args = ['-jar', 'api.jar'];
     const options = {
-      cwd: path.join(__dirname, 'build'),
+      cwd: path.join(__dirname, '..', '..', 'external'),
     };
     const subprocess = spawn(baseCommand, args, options);
+
+    subprocess.on('error', (err) => {
+      console.error('Error occurred while spawning process:', err);
+    });
 }
 
 module.exports = {

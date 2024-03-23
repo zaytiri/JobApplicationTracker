@@ -3,7 +3,7 @@ const webpack = require("webpack");
 
 module.exports = {
   mode: 'development',
-  entry: './src/js/index.js',
+  entry: './src/main/index.js',
   devtool: 'inline-source-map',
   target: 'electron-renderer',
   module: {
@@ -41,8 +41,8 @@ module.exports = {
     extensions: ['.js'],
   },
   output: {
-    filename: 'app.js',
-    path: path.resolve(__dirname, 'build'),
+    filename: 'compiled_react_code.js',
+    path: path.resolve(__dirname, 'external'),
   },
   plugins: [
     new webpack.ProvidePlugin({
