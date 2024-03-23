@@ -42,7 +42,7 @@ module.exports = {
   },
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, 'build', 'js'),
+    path: path.resolve(__dirname, 'build'),
   },
   plugins: [
     new webpack.ProvidePlugin({
