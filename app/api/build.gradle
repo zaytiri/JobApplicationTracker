@@ -18,13 +18,22 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // libraries to have access to the rest api
     implementation 'org.glassfish.jersey.containers:jersey-container-servlet:3.1.1'
     implementation 'org.glassfish.jersey.inject:jersey-hk2:3.1.1'
     implementation 'org.glassfish.jersey.core:jersey-server:3.1.1'
     implementation 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:3.1.1'
+
+    //MIEQ library to have access to easily querying data from db.
+    implementation files('libs/mieq-v1.0.1.jar')
+
     // dagger DI -- dapper is a dagger fork which supports modular projects.
     implementation('io.github.jbock-java:dapper:2.41.2')
     annotationProcessor('io.github.jbock-java:dapper-compiler:2.41.2')
+
+    // sqlite jdbc database
+    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.41.2.2'
 }
 
 jar {
