@@ -1,4 +1,4 @@
-package org.example;
+package personal.zaytiri.jobtracker;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;

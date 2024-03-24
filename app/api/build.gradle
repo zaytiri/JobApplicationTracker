@@ -3,12 +3,12 @@ plugins {
     id 'application'
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+group = 'personal.zaytiri.jobtracker'
+version = '1.0'
 
 application {
-    mainModule = 'org.example'
-    mainClass = 'org.example.Main'
+    mainModule = 'personal.zaytiri.jobtracker'
+    mainClass = 'personal.zaytiri.jobtracker.Main'
 }
 
 repositories {

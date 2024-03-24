@@ -1,4 +1,4 @@
-package org.example;
+package personal.zaytiri.jobtracker;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
