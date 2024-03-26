@@ -1,18 +1,15 @@
-package personal.zaytiri.jobtracker.persistence.mappers.base;
+package personal.zaytiri.jobtracker.api.mappers.base;
 
 import java.time.LocalDate;
 import java.util.Map;
 
 public abstract class Mapper<E, M> implements IMapper<E, M> {
-    protected String tablePrefix;
 
-    protected Mapper(String tablePrefix) {
-        this.tablePrefix = tablePrefix;
-    }
+    protected abstract String getTablePrefix();
 
     protected String getFormattedName(boolean mixedResult, String columnName) {
         if (mixedResult) {
-            return tablePrefix + columnName;
+            return getTablePrefix() + columnName;
         }
         return columnName;
     }
