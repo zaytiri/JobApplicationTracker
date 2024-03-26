@@ -152,35 +152,6 @@
             <default>null</default>
         </column>
     </table>
-    <table> <!-- table document -->
-        <name>document</name>
-        <column>
-            <name>id</name>
-            <type>integer</type>
-            <default>1</default>
-            <isprimarykey>true</isprimarykey>
-        </column>
-        <column>
-            <name>name</name>
-            <type>text</type>
-            <default>null</default>
-        </column>
-        <column>
-            <name>file_path</name>
-            <type>text</type>
-            <default>null</default>
-        </column>
-        <column>
-            <name>updated_at</name>
-            <type>numeric</type>
-            <default>null</default>
-        </column>
-        <column>
-            <name>created_at</name>
-            <type>numeric</type>
-            <default>null</default>
-        </column>
-    </table>
     <table> <!-- table job_offer_tag -->
         <name>job_offer_tag</name>
         <column>
@@ -197,30 +168,6 @@
         <column>
             <name>tag_id</name>
             <type>numeric</type>
-            <default>null</default>
-        </column>
-        <column>
-            <name>updated_at</name>
-            <type>numeric</type>
-            <default>null</default>
-        </column>
-        <column>
-            <name>created_at</name>
-            <type>numeric</type>
-            <default>null</default>
-        </column>
-    </table>
-    <table> <!-- table tag -->
-        <name>tag</name>
-        <column>
-            <name>id</name>
-            <type>integer</type>
-            <default>1</default>
-            <isprimarykey>true</isprimarykey>
-        </column>
-        <column>
-            <name>name</name>
-            <type>text</type>
             <default>null</default>
         </column>
         <column>
