@@ -12,7 +12,6 @@ public abstract class Model {
 
     protected Table table;
     protected int id;
-    protected String name;
     protected LocalDate updatedAt;
     protected LocalDate createdAt;
 
@@ -42,15 +41,6 @@ public abstract class Model {
 
     public Model setId(int id) {
         this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Model setName(String name) {
-        this.name = name;
         return this;
     }
 
