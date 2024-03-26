@@ -1,10 +1,11 @@
-import { MyComponent } from "./api_calls";
+import React from "react";
+import { DraggableView } from "./draggable_view";
 
-export const JobTracker = () => {  
-    return (
-        <div>
-            <MyComponent/>
-              {/* all app react code here */}
-            </div>
-    )
-    };
+export const JobTracker = () => {
+  return (
+    <div >
+      {/* Components here */}
+      <DraggableView/>
+    </div>
+  );
+};
