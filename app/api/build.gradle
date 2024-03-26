@@ -34,6 +34,10 @@ dependencies {
 
     // sqlite jdbc database
     implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.41.2.2'
+
+    // auto mapping
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
 }
 
 jar {
