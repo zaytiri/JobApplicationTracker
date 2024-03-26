@@ -1,7 +1,7 @@
 package personal.zaytiri.jobtracker.persistence.repositories.base;
 
+import personal.zaytiri.jobtracker.persistence.DatabaseShema;
 import personal.zaytiri.jobtracker.persistence.DbConnection;
-import personal.zaytiri.jobtracker.persistence.mappers.base.IMapper;
 import personal.zaytiri.jobtracker.persistence.models.base.Model;
 import personal.zaytiri.jobtracker.persistence.repositories.interfaces.IRepository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
@@ -19,26 +19,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Repository<GEntity, GModel extends Model, GMapper extends IMapper<GEntity, GModel>> implements IRepository<GEntity> {
-
-    protected final GMapper mapper;
-    protected GModel model;
+public abstract class Repository<TModel extends Model> implements IRepository<TModel> {
     protected DbConnection connection;
 
-    protected Repository(GModel model, GMapper mapper) {
-        this.model = model;
-        this.mapper = mapper;
+    protected Repository() {
         this.connection = DbConnection.getInstance();
     }
 
     @Override
-    public Response create(GEntity entity) {
-        model = mapper.toModel(entity);
-
+    public Response create(TModel model) {
         InsertQueryBuilder query = new InsertQueryBuilder(connection.open());
 
         List<String> exclude = new ArrayList<>();
-        exclude.add("id");
+        exclude.add(DatabaseShema.getINSTANCE().idColumnName);
 
         query.insertInto(model.getTable(), model.getTable().getAllColumnsExcept(exclude))
                 .values(model.getValues());
@@ -47,19 +40,17 @@ public abstract class Repository<GEntity, GModel extends Model, GMapper extends 
     }
 
     @Override
-    public Response delete(GEntity entity) {
-        model = mapper.toModel(entity);
-
+    public Response delete(TModel model) {
         DeleteQueryBuilder query = new DeleteQueryBuilder(connection.open());
 
         query.deleteFrom(model.getTable())
-                .where(model.getTable().getColumn("id"), Operators.EQUALS, model.getId());
+                .where(model.getTable().getColumn(DatabaseShema.getINSTANCE().idColumnName), Operators.EQUALS, model.getId());
 
         return query.execute();
     }
 
     @Override
-    public Response read(Map<String, Pair<String, Object>> filters, Pair<String, String> orderByColumn) {
+    public Response read(TModel model, Map<String, Pair<String, Object>> filters, Pair<String, String> orderByColumn) {
         SelectQueryBuilder query = new SelectQueryBuilder(connection.open());
 
         query = query.select().from(model.getTable());
@@ -96,20 +87,18 @@ public abstract class Repository<GEntity, GModel extends Model, GMapper extends 
     }
 
     @Override
-    public Response update(GEntity entity) {
-        return update(entity, mapper.toModel(entity).getValues());
+    public Response update(TModel model) {
+        return update(model, model.getValues());
     }
 
     @Override
-    public Response update(GEntity entity, List<Pair<String, Object>> values) {
-        model = mapper.toModel(entity);
-
+    public Response update(TModel model, List<Pair<String, Object>> values) {
         UpdateQueryBuilder query = new UpdateQueryBuilder(connection.open());
 
         Map<Column, Object> sets = new HashMap<>();
 
         for (Pair<String, Object> entry : values) {
-            if (entry.getKey().equals("id")) {
+            if (entry.getKey().equals(DatabaseShema.getINSTANCE().idColumnName)) {
                 continue;
             }
 
@@ -118,7 +107,7 @@ public abstract class Repository<GEntity, GModel extends Model, GMapper extends 
         }
 
         query.update(model.getTable())
-                .values(sets).where(model.getTable().getColumn("id"), Operators.EQUALS, model.getId());
+                .values(sets).where(model.getTable().getColumn(DatabaseShema.getINSTANCE().idColumnName), Operators.EQUALS, model.getId());
 
         return query.execute();
     }
