@@ -35,6 +35,11 @@ dependencies {
     // sqlite jdbc database
     implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.41.2.2'
 
+    // json manipulation
+    implementation 'org.json:json:20231013'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+
     // auto mapping
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
