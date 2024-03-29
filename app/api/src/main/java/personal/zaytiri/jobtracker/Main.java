@@ -9,7 +9,7 @@ import java.net.URI;
 
 public class Main {
 
-    public static final String BASE_URI = "https://localhost:8080/";
+    public static final String BASE_URI = "http://localhost:8080/";
 
     public static HttpServer startServer() {
         final ResourceConfig rc = new ResourceConfig().packages("personal.zaytiri.jobtracker.api.controllers");
