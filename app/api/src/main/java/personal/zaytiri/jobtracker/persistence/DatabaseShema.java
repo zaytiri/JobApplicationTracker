@@ -18,6 +18,7 @@ public class DatabaseShema {
 
     // status table
     public String statusTableName = "status";
+    public String colorColumnName = "color";
 
     // job offer - document intermediary table
     public String jobOfferDocumentTableName = "job_offer_document";

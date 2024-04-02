@@ -84,6 +84,11 @@
             <default>null</default>
         </column>
         <column>
+            <name>color</name>
+            <type>text</type>
+            <default>null</default>
+        </column>
+        <column>
             <name>updated_at</name>
             <type>numeric</type>
             <default>null</default>
