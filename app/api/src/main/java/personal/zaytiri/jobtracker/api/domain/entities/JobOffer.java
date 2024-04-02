@@ -1,22 +1,8 @@
 package personal.zaytiri.jobtracker.api.domain.entities;
 
-import jakarta.inject.Inject;
 import personal.zaytiri.jobtracker.api.domain.entities.base.Entity;
-import personal.zaytiri.jobtracker.api.domain.entities.base.IStorageOperations;
-import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
-import personal.zaytiri.jobtracker.dependencyinjection.AppComponent;
-import personal.zaytiri.jobtracker.api.mappers.JobOfferMapper;
-import personal.zaytiri.jobtracker.persistence.DatabaseShema;
-import personal.zaytiri.jobtracker.persistence.repositories.interfaces.IJobOfferRepository;
-import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
-import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Operators;
-import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.response.Response;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class JobOffer extends Entity<JobOffer> {
     private String company;
