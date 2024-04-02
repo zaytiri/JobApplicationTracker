@@ -12,21 +12,18 @@ import java.util.List;
 
 public class Jackson {
     public <T> String fromListToJson(List<T> list) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectMapper mapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
+        String out = "";
 
-        mapper.getFactory()
+        getMapper().getFactory()
                 .setStreamWriteConstraints(StreamWriteConstraints.builder().maxNestingDepth(Integer.MAX_VALUE).build());
 
         try {
-            mapper.writeValue(out, list);
+            out = getMapper().writeValueAsString(list);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return out.toString();
+        return out;
     }
 
     public ObjectMapper getMapper(){
