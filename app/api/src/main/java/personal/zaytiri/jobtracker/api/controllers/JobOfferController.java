@@ -9,7 +9,8 @@ import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 import personal.zaytiri.jobtracker.api.domain.entities.Status;
 import personal.zaytiri.jobtracker.api.domain.entities.StorageOperations;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
-import personal.zaytiri.jobtracker.api.libraries.WebScraper;
+import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraper;
+import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraperFactory;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
 import personal.zaytiri.jobtracker.api.mappers.StatusMapperImpl;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
@@ -133,13 +134,19 @@ public class JobOfferController {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response scrapeJobOffer(String url){
-        WebScraper scrape = new WebScraper();
-
         JSONObject obj = new JSONObject();
 
         JobOffer scrapedJobOffer = null;
+
+        WebScraper scraper = WebScraperFactory.findSuitableScraper(url);
+        if(scraper == null){
+            JSONObject noSuitableResponse = new JSONObject();
+            noSuitableResponse.put("message", "no suitable scraper found.");
+            return Response.ok().entity(noSuitableResponse.toString()).build();
+        }
+
         try {
-            scrapedJobOffer = scrape.process(url);
+            scrapedJobOffer = scraper.process(url);
         } catch (IOException e) {
             obj.put("success", false);
             obj.put("message", e);
