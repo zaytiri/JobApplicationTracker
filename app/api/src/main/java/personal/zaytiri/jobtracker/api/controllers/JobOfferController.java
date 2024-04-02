@@ -95,7 +95,62 @@ public class JobOfferController {
                 .build();
     }
 
-    
+    @GET
+    @Path("/find/{text}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findJobOffer(@PathParam("text") String text) {
+        CompletableFuture<List<JobOffer>> byCompany = CompletableFuture.supplyAsync(() -> findBy(text, DatabaseShema.getINSTANCE().companyColumnName));
+        CompletableFuture<List<JobOffer>> byRole = CompletableFuture.supplyAsync(() -> findBy(text, DatabaseShema.getINSTANCE().roleColumnName));
+        CompletableFuture<List<JobOffer>> byLocation = CompletableFuture.supplyAsync(() -> findBy(text, DatabaseShema.getINSTANCE().locationColumnName));
+
+        CompletableFuture<List<String>>[] tasks = new CompletableFuture[] {byCompany, byRole, byLocation};
+
+        CompletableFuture<List<JobOffer>> combinedFuture = CompletableFuture.allOf(byCompany, byRole, byLocation)
+                .thenApply(v -> {
+                    List<JobOffer> allJobOffers = Stream.of(byCompany, byRole, byLocation)
+                            .map(CompletableFuture::join)
+                            .flatMap(List::stream)
+                            .toList();
+
+                    return (List<JobOffer>) new ArrayList<JobOffer>(allJobOffers.stream()
+                            .collect(Collectors.toMap(
+                                    JobOffer::getId, // Property to distinct by
+                                    jobOffer -> jobOffer, // Identity function
+                                    (existing, replacement) -> existing // Merge function
+                            ))
+                            .values());
+                });
+
+        List<JobOffer> foundJobOffers = new ArrayList<>();
+        try {
+            foundJobOffers = combinedFuture.get();
+            System.out.println("Merged List: " + foundJobOffers);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        String jsonToReturn = new Jackson().fromListToJson(foundJobOffers);
+
+        return Response
+                .ok()
+                .entity(jsonToReturn)
+                .build();
+    }
+
+    private List<JobOffer> findBy(String text, String columnName){
+        FindByTextOperation<JobOfferModel> findByTextOperation = new FindByTextOperation<>();
+        findByTextOperation.setRepository(new Repository<>());
+
+        FindByTextOperationRequest<JobOfferModel> findByTextOperationRequest = new FindByTextOperationRequest<>();
+        findByTextOperationRequest.setModel(new JobOfferModel());
+        findByTextOperationRequest.setTextToFind(text);
+        findByTextOperationRequest.setColumnToFind(columnName);
+
+        var results = findByTextOperation.execute(findByTextOperationRequest);
+
+        return new JobOfferMapperImpl().toEntity(results, false);
+    }
 
     @DELETE
     @Path("/remove/{id}")
