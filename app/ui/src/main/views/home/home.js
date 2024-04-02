@@ -45,7 +45,13 @@ export const Home = () => {
   const moreAction = (id) => {
     setCurrentJobOffer(jobOffers.find((jobOffer) => { return jobOffer.id === id }));
     
-    if (!isOpen) onToggle();
+    if (!isOpen){
+      onToggle();
+    }else{
+      if(id === currentJobOffer.id){
+        onToggle();
+      }
+    }
   }
 
   const getStatusById = (id) => {
@@ -123,8 +129,7 @@ export const Home = () => {
               <Text fontSize="xl" color={textColor} fontWeight="bold">
                 Job Applications
               </Text>
-
-
+              
             </Flex>
           </CardHeader>
           <CardBody>
@@ -178,10 +183,12 @@ export const Home = () => {
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             position: 'relative',
+            // right: '15px',
           }}
         >
           <MoreInfo
             currentJobOffer={currentJobOffer}
+            currentStatus={getStatusById(currentJobOffer.statusId)}
             jobOffers={jobOffers}
             setJobOffers={setGlobalJobOffers}
             onToggle={onToggle} />
