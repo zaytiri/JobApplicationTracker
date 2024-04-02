@@ -6,12 +6,16 @@ import jakarta.ws.rs.core.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
+import personal.zaytiri.jobtracker.api.domain.entities.Status;
 import personal.zaytiri.jobtracker.api.domain.entities.StorageOperations;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.libraries.WebScraper;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
+import personal.zaytiri.jobtracker.api.mappers.StatusMapperImpl;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
+import personal.zaytiri.jobtracker.persistence.models.StatusModel;
 import personal.zaytiri.jobtracker.persistence.repositories.JobOfferRepository;
+import personal.zaytiri.jobtracker.persistence.repositories.StatusRepository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
 
 import java.io.IOException;
@@ -143,5 +147,58 @@ public class JobOfferController {
         }
 
         return Response.ok().entity(new Jackson().fromObjectToJson(scrapedJobOffer)).build();
+    }
+
+    @GET
+    @Path("/job-offer-by-status")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getJobOffersByStatus(){
+        StorageOperations<JobOfferModel> jobOfferOperations = new StorageOperations<>();
+        jobOfferOperations.setRepository(new JobOfferRepository());
+
+        JobOfferModel jobOfferModel = new JobOfferModel();
+        List<JobOffer> jobOffers = new JobOfferMapperImpl().toEntity(jobOfferOperations.get(jobOfferModel, new HashMap<>(), null), false);
+
+        StorageOperations<StatusModel> statusOperations = new StorageOperations<>();
+        statusOperations.setRepository(new StatusRepository());
+
+        StatusModel statusModel = new StatusModel();
+        List<Status> statuses = new StatusMapperImpl().toEntity(statusOperations.get(statusModel, new HashMap<>(), null), false);
+
+        JSONArray array = new JSONArray();
+        HashMap<Integer, JSONObject> mapped = new HashMap<>();
+
+        JSONObject defaultStatus = new JSONObject();
+        defaultStatus.put("id", 0);
+        defaultStatus.put("name", "No Status");
+        defaultStatus.put("cards", new JSONArray());
+        mapped.put(0, defaultStatus);
+
+        for (var status : statuses){
+            JSONObject obj = new JSONObject();
+            obj.put("id", status.getId());
+            obj.put("name", status.getName());
+            obj.put("cards", new JSONArray());
+            mapped.put(status.getId(), obj);
+        }
+
+        for (var jobOffer : jobOffers){
+            JSONObject obj = new JSONObject();
+            obj.put("id", jobOffer.getId());
+            obj.put("company", jobOffer.getCompany());
+            obj.put("role", jobOffer.getRole());
+            obj.put("appliedAt", jobOffer.getAppliedAt());
+
+            JSONObject status = mapped.get(jobOffer.getStatusId());
+            JSONArray cards = (JSONArray) status.get("cards");
+            cards.put(obj);
+            status.put("cards", cards);
+        }
+
+        for (var elem : mapped.values()){
+            array.put(elem);
+        }
+
+        return Response.ok().entity(array.toString()).build();
     }
 }
