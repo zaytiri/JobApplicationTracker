@@ -18,7 +18,7 @@ public abstract class JobOfferMapper extends Mapper<JobOffer, JobOfferModel> {
         var schema = DatabaseShema.getINSTANCE();
 
         for (Map<String, String> row : rows) {
-            JobOffer jobOffer = new JobOffer().getInstance();
+            JobOffer jobOffer = new JobOffer();
 
             jobOffer.setId(getRowIntValue(row, mixedResult, schema.idColumnName));
             jobOffer.setCompany(getRowStringValue(row, mixedResult, schema.companyColumnName));

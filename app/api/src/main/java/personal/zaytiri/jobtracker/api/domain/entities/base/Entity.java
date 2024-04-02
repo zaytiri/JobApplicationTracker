@@ -5,11 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import personal.zaytiri.jobtracker.dependencyinjection.AppComponent;
 import personal.zaytiri.jobtracker.dependencyinjection.DaggerAppComponent;
 
-public abstract class Entity<E, R, M> implements IDependencyInjection<E> {
-    @JsonIgnore
-    protected R repository;
-    @JsonIgnore
-    protected M mapper;
+public abstract class Entity<E> {
 
     protected int id;
 
@@ -17,15 +13,5 @@ public abstract class Entity<E, R, M> implements IDependencyInjection<E> {
         return id;
     }
 
-    @JsonIgnore
-    public E getInstance() {
-        AppComponent component = DaggerAppComponent.create();
-
-        return getInjectedComponent(component);
-    }
-
     public abstract E setId(int id);
-
-    @JsonIgnore
-    protected abstract E getInjectedComponent(AppComponent component);
 }

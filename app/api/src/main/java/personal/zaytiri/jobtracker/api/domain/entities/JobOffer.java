@@ -18,8 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JobOffer extends Entity<JobOffer, IJobOfferRepository, JobOfferMapper> implements IStorageOperations<JobOffer> {
-    private IJobOfferRepository repository;
+public class JobOffer extends Entity<JobOffer> {
     private String company;
     private String role;
     private String companyWebsite;
@@ -111,73 +110,9 @@ public class JobOffer extends Entity<JobOffer, IJobOfferRepository, JobOfferMapp
                 '}';
     }
 
-    @Inject
-    public JobOffer(IJobOfferRepository repository) {
-        this.repository = repository;
-        this.mapper = new JobOfferMapperImpl();
-    }
-
     @Override
     public JobOffer setId(int id) {
         this.id = id;
         return this;
     }
-
-    @Override
-    protected JobOffer getInjectedComponent(AppComponent component) {
-        return component.getJobOffer();
-    }
-
-    @Override
-    public boolean create() {
-        if (exists()) {
-            return false;
-        }
-
-        Response response = repository.create(mapper.entityToModel(this));
-
-        this.id = response.getLastInsertedId();
-
-        return response.isSuccess();
-    }
-
-    @Override
-    public boolean delete() {
-        Response response = repository.delete(mapper.entityToModel(this));
-        if (get() != null) {
-            return false;
-        }
-        return response.isSuccess();
-    }
-
-    @Override
-    public boolean exists() {
-        return false;
-    }
-
-    @Override
-    public List<JobOffer> get(Map<String, Pair<String, Object>> filters, Pair<String, String> orderByColumn) {
-        Response response = repository.read(mapper.entityToModel(this), filters, orderByColumn);
-
-        return mapper.toEntity(response.getResult(), false);
-    }
-
-    @Override
-    public JobOffer get() {
-        Map<String, Pair<String, Object>> filters = new HashMap<>();
-        filters.put(DatabaseShema.getINSTANCE().idColumnName, new Pair<>(Operators.EQUALS.value, this.id));
-
-        List<JobOffer> results = get(filters, null);
-        if (results.isEmpty()) {
-            return null;
-        }
-
-        return results.get(0);
-    }
-
-    @Override
-    public boolean update() {
-        return repository.update(mapper.entityToModel(this)).isSuccess();
-    }
-
 }

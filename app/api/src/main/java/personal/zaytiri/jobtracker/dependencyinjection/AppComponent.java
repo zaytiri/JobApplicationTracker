@@ -9,5 +9,4 @@ import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 @Singleton
 @Component(modules = {RepositoriesModule.class})
 public interface AppComponent {
-    JobOffer getJobOffer();
 }

@@ -7,6 +7,4 @@ import personal.zaytiri.jobtracker.persistence.repositories.interfaces.IJobOffer
 
 @Module
 public abstract class RepositoriesModule {
-    @Binds
-    abstract IJobOfferRepository bindJobOfferRepository(JobOfferRepository impl);
 }
