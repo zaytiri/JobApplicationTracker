@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Repository<TModel extends Model> implements IRepository<TModel> {
+public class Repository<TModel extends Model> implements IRepository<TModel> {
     protected DbConnection connection;
 
-    protected Repository() {
+    public Repository() {
         this.connection = DbConnection.getInstance();
     }
 
