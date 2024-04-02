@@ -7,8 +7,8 @@ const isDev = !app.isPackaged;
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    // width: 1200,
+    // height: 800,
     backgroundColor: "white",
     webPreferences: {
       nodeIntegration: false,
@@ -19,6 +19,8 @@ function createWindow() {
   })
 
   win.loadFile('src/app/main.html');
+  win.maximize();
+  win.webContents.openDevTools()
 }
 
 if (isDev) {
