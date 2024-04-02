@@ -123,4 +123,25 @@ public class JobOfferController {
                 .entity(obj.toString())
                 .build();
     }
+
+    @POST
+    @Path("/scrape")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response scrapeJobOffer(String url){
+        WebScraper scrape = new WebScraper();
+
+        JSONObject obj = new JSONObject();
+
+        JobOffer scrapedJobOffer = null;
+        try {
+            scrapedJobOffer = scrape.process(url);
+        } catch (IOException e) {
+            obj.put("success", false);
+            obj.put("message", e);
+            return Response.ok().entity(obj).build();
+        }
+
+        return Response.ok().entity(new Jackson().fromObjectToJson(scrapedJobOffer)).build();
+    }
 }

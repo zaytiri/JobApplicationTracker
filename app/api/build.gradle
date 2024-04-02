@@ -43,6 +43,9 @@ dependencies {
     // auto mapping
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+
+    // scrapping websites
+    implementation group: 'org.htmlunit', name: 'htmlunit', version: '3.11.0'
 }
 
 jar {
