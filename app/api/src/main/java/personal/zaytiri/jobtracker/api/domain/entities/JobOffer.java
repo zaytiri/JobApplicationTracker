@@ -13,6 +13,7 @@ import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.q
 import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.response.Response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class JobOffer extends Entity<JobOffer, IJobOfferRepository, JobOfferMapp
     private String location;
     private String link;
     private String description;
-    private LocalDate appliedAt;
+    private LocalDateTime appliedAt;
     private int statusId;
     private String interviewNotes;
 
@@ -77,11 +78,11 @@ public class JobOffer extends Entity<JobOffer, IJobOfferRepository, JobOfferMapp
         this.description = description;
     }
 
-    public LocalDate getAppliedAt() {
+    public LocalDateTime getAppliedAt() {
         return appliedAt;
     }
 
-    public void setAppliedAt(LocalDate appliedAt) {
+    public void setAppliedAt(LocalDateTime appliedAt) {
         this.appliedAt = appliedAt;
     }
 

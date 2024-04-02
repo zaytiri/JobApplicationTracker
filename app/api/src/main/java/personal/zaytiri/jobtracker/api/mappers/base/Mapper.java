@@ -1,6 +1,7 @@
 package personal.zaytiri.jobtracker.api.mappers.base;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public abstract class Mapper<E, M> implements IMapper<E, M> {
@@ -22,12 +23,12 @@ public abstract class Mapper<E, M> implements IMapper<E, M> {
         return Integer.parseInt(value) != 0;
     }
 
-    protected LocalDate getRowDateValue(Map<String, String> row, boolean mixedResult, String columnName) {
+    protected LocalDateTime getRowDateValue(Map<String, String> row, boolean mixedResult, String columnName) {
         String value = getRowValue(row, mixedResult, columnName);
         if (value == null) {
-            return LocalDate.MIN;
+            return LocalDateTime.MIN;
         }
-        return LocalDate.parse(value);
+        return LocalDateTime.parse(value);
     }
 
     protected int getRowIntValue(Map<String, String> row, boolean mixedResult, String columnName) {
