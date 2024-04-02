@@ -17,7 +17,7 @@ public class DatabaseShema {
     public String interviewNotesColumnName = "interview_notes";
 
     // status table
-    public String statusTableName = "status_id";
+    public String statusTableName = "status";
 
     // job offer - document intermediary table
     public String jobOfferDocumentTableName = "job_offer_document";
