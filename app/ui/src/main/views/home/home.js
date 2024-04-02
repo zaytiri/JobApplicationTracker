@@ -20,11 +20,12 @@ import CardHeader from "../../template/components/Card/CardHeader.js";
 import JobApplicationTableRow from "../../template/components/Tables/JobApplicationTableRow.js";
 import { motion } from "framer-motion";
 
-import { get as getJobOffers } from "../../api/api_endpoints/job_offer_api.js"
+import { get as getJobOffers, find } from "../../api/api_endpoints/job_offer_api.js"
 import { get as getStatus } from "../../api/api_endpoints/status_api.js"
 import { AddJobOffer } from "../../popups/add_job_offer.js"
 import { MoreInfo } from "./more_info.js";
 import { ManageJobStatus } from "../../popups/manage_job_status.js";
+import { SearchBar } from "../../template/components/Navbars/SearchBar/SearchBar.js";
 
 
 export const Home = () => {
@@ -35,6 +36,7 @@ export const Home = () => {
 
   const [status, setStatus] = useState([])
   const [jobOffers, setJobOffers] = useState([]);
+  const [originalJobOffers, setOriginalJobOffers] = useState([]);
   const [currentJobOffer, setCurrentJobOffer] = useState({});
 
   const { isOpen, onToggle } = useDisclosure();
@@ -55,7 +57,7 @@ export const Home = () => {
     const fetchData = async () => {
       try {
         const response = await getJobOffers({});
-        setJobOffers(response);
+        setGlobalJobOffers(response);
 
         const statusResponse = await getStatus({});
         setStatus(statusResponse);
@@ -69,6 +71,23 @@ export const Home = () => {
       setFetchDataAgain(false);
     }
   }, [fetchDataAgain]);
+
+  const setGlobalJobOffers = (response) => {
+    setJobOffers(response);
+    setOriginalJobOffers(response);
+  }
+
+  const findText = async (text) => {
+    console.log(text);
+
+    if(text === ''){
+      setJobOffers(originalJobOffers);
+      return;
+    }
+
+    const response = await find(text);
+    setJobOffers(response);
+  }
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }} >
@@ -86,6 +105,8 @@ export const Home = () => {
         p='24px'
         borderRadius='20px'
         gap='20px'>
+
+        <SearchBar me='18px' findText={findText}/>
 
         <AddJobOffer setFetchDataAgain={setFetchDataAgain} />
 
@@ -162,7 +183,7 @@ export const Home = () => {
           <MoreInfo
             currentJobOffer={currentJobOffer}
             jobOffers={jobOffers}
-            setJobOffers={setJobOffers}
+            setJobOffers={setGlobalJobOffers}
             onToggle={onToggle} />
         </motion.div>
       </Grid>

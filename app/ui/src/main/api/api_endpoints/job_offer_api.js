@@ -54,3 +54,9 @@ export const getJobOffersByStatus = async function() {
     return response.data;
   });
 };
+
+export const find = async function(text) {
+  return await axios.get(baseUrl + "find/" + text, headers).then((response) => {
+    return response.data;
+  });
+};

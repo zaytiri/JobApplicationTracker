@@ -52,7 +52,7 @@ export default function HeaderLinks(props) {
       w={{ sm: "100%", md: "auto" }}
       alignItems='center'
       flexDirection='row'>
-      <SearchBar me='18px' />
+      
       <SidebarResponsive
         hamburgerColor={"white"}
         logo={
