@@ -5,24 +5,29 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import personal.zaytiri.jobtracker.api.database.operations.*;
+import personal.zaytiri.jobtracker.api.database.requests.FindByTextOperationRequest;
+import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 import personal.zaytiri.jobtracker.api.domain.entities.Status;
-import personal.zaytiri.jobtracker.api.domain.entities.StorageOperations;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraper;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraperFactory;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
-import personal.zaytiri.jobtracker.api.mappers.StatusMapperImpl;
+import personal.zaytiri.jobtracker.persistence.DatabaseShema;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
-import personal.zaytiri.jobtracker.persistence.models.StatusModel;
-import personal.zaytiri.jobtracker.persistence.repositories.JobOfferRepository;
-import personal.zaytiri.jobtracker.persistence.repositories.StatusRepository;
+import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path("job-offer")
 public class JobOfferController {
@@ -36,11 +41,10 @@ public class JobOfferController {
         Jackson convert = new Jackson();
         convert.fromJsonToObject(jobOffer, newJobOffer);
 
-        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
-        operations.setRepository(new JobOfferRepository());
+        CreateOperation<JobOfferModel> createOperation = new CreateOperation<>();
+        createOperation.setRepository(new Repository<>());
 
-        JobOfferModel model = new JobOfferMapperImpl().entityToModel(newJobOffer);
-        boolean isCreated = operations.create(model);
+        boolean isCreated = createOperation.execute(new JobOfferMapperImpl().entityToModel(newJobOffer));
 
         JSONObject obj = new JSONObject();
         obj.put("success", isCreated);
@@ -62,14 +66,13 @@ public class JobOfferController {
         Jackson convert = new Jackson();
         convert.fromJsonToObject(jobOffer, newJobOffer);
 
-        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
-        operations.setRepository(new JobOfferRepository());
+        UpdateOperation<JobOfferModel> updateOperation = new UpdateOperation<>();
+        updateOperation.setRepository(new Repository<>());
 
-        JobOfferModel model = new JobOfferMapperImpl().entityToModel(newJobOffer);
-        boolean isCreated = operations.update(model);
+        boolean isUpdated = updateOperation.execute(new JobOfferMapperImpl().entityToModel(newJobOffer));
 
         JSONObject obj = new JSONObject();
-        obj.put("success", isCreated);
+        obj.put("success", isUpdated);
 
         return Response
                 .ok()
@@ -82,29 +85,17 @@ public class JobOfferController {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(String filtersJson) {
-        Map<String, Pair<String, Object>> filters = new HashMap<>();
-        JSONObject filtersToConvert = new JSONObject(filtersJson);
+        List<JobOffer> filteredJobOffers = retrieveJobOffers(filtersJson);
 
-        for (String key : filtersToConvert.keySet()) {
-            JSONObject pair = (JSONObject) filtersToConvert.get(key);
-
-            for (String keyPair : pair.keySet()) {
-                filters.put(key, new Pair<>(keyPair, pair.get(keyPair)));
-            }
-        }
-        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
-        operations.setRepository(new JobOfferRepository());
-
-        JobOfferModel model = new JobOfferModel();
-        List<JobOffer> results = new JobOfferMapperImpl().toEntity(operations.get(model, filters, null), false);
-
-        String jsonToReturn = new Jackson().fromListToJson(results);
+        String jsonToReturn = new Jackson().fromListToJson(filteredJobOffers);
 
         return Response
                 .ok()
                 .entity(jsonToReturn)
                 .build();
     }
+
+    
 
     @DELETE
     @Path("/remove/{id}")
@@ -114,11 +105,10 @@ public class JobOfferController {
         JobOffer jobOfferToRemove = new JobOffer();
         jobOfferToRemove.setId(id);
 
-        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
-        operations.setRepository(new JobOfferRepository());
+        DeleteOperation<JobOfferModel> deleteOperation = new DeleteOperation<>();
+        deleteOperation.setRepository(new Repository<>());
 
-        JobOfferModel model = new JobOfferMapperImpl().entityToModel(jobOfferToRemove);
-        boolean isDeleted = operations.delete(model);
+        boolean isDeleted = deleteOperation.execute(new JobOfferMapperImpl().entityToModel(jobOfferToRemove));
 
         JSONObject obj = new JSONObject();
         obj.put("success", isDeleted);
@@ -160,17 +150,8 @@ public class JobOfferController {
     @Path("/job-offer-by-status")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getJobOffersByStatus(){
-        StorageOperations<JobOfferModel> jobOfferOperations = new StorageOperations<>();
-        jobOfferOperations.setRepository(new JobOfferRepository());
-
-        JobOfferModel jobOfferModel = new JobOfferModel();
-        List<JobOffer> jobOffers = new JobOfferMapperImpl().toEntity(jobOfferOperations.get(jobOfferModel, new HashMap<>(), null), false);
-
-        StorageOperations<StatusModel> statusOperations = new StorageOperations<>();
-        statusOperations.setRepository(new StatusRepository());
-
-        StatusModel statusModel = new StatusModel();
-        List<Status> statuses = new StatusMapperImpl().toEntity(statusOperations.get(statusModel, new HashMap<>(), null), false);
+        List<JobOffer> jobOffers = retrieveJobOffers("{}");
+        List<Status> statuses = new StatusController().retrieveStatuses("{}");
 
         JSONArray array = new JSONArray();
         HashMap<Integer, JSONObject> mapped = new HashMap<>();
@@ -208,4 +189,29 @@ public class JobOfferController {
 
         return Response.ok().entity(array.toString()).build();
     }
+
+    private List<JobOffer> retrieveJobOffers(String filtersJson) {
+        Map<String, Pair<String, Object>> filters = new HashMap<>();
+        JSONObject filtersToConvert = new JSONObject(filtersJson);
+
+        for (String key : filtersToConvert.keySet()) {
+            JSONObject pair = (JSONObject) filtersToConvert.get(key);
+
+            for (String keyPair : pair.keySet()) {
+                filters.put(key, new Pair<>(keyPair, pair.get(keyPair)));
+            }
+        }
+
+        GetOperation<JobOfferModel> getOperation = new GetOperation<>();
+        getOperation.setRepository(new Repository<>());
+
+        GetOperationRequest<JobOfferModel> getOperationRequest = new GetOperationRequest<>();
+        getOperationRequest.setModel(new JobOfferModel());
+        getOperationRequest.setFilters(filters);
+        getOperationRequest.setOrderByColumn(null);
+
+        List<Map<String, String>> results = getOperation.execute(getOperationRequest);
+        return new JobOfferMapperImpl().toEntity(results, false);
+    }
+
 }

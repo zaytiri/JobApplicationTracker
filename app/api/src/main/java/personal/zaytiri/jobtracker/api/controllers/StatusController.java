@@ -4,12 +4,16 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
+import personal.zaytiri.jobtracker.api.database.operations.CreateOperation;
+import personal.zaytiri.jobtracker.api.database.operations.DeleteOperation;
+import personal.zaytiri.jobtracker.api.database.operations.GetOperation;
+import personal.zaytiri.jobtracker.api.database.operations.UpdateOperation;
+import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
 import personal.zaytiri.jobtracker.api.domain.entities.Status;
-import personal.zaytiri.jobtracker.api.domain.entities.StorageOperations;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.mappers.StatusMapperImpl;
 import personal.zaytiri.jobtracker.persistence.models.StatusModel;
-import personal.zaytiri.jobtracker.persistence.repositories.StatusRepository;
+import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
 
 import java.util.HashMap;
@@ -28,11 +32,10 @@ public class StatusController {
         Jackson convert = new Jackson();
         convert.fromJsonToObject(status, newStatus);
 
-        StorageOperations<StatusModel> operations = new StorageOperations<>();
-        operations.setRepository(new StatusRepository());
+        CreateOperation<StatusModel> createOperation = new CreateOperation<>();
+        createOperation.setRepository(new Repository<>());
 
-        StatusModel model = new StatusMapperImpl().entityToModel(newStatus);
-        boolean isCreated = operations.create(model);
+        boolean isCreated = createOperation.execute(new StatusMapperImpl().entityToModel(newStatus));
 
         JSONObject obj = new JSONObject();
         obj.append("success", isCreated);
@@ -54,14 +57,13 @@ public class StatusController {
         Jackson convert = new Jackson();
         convert.fromJsonToObject(status, updatedStatus);
 
-        StorageOperations<StatusModel> operations = new StorageOperations<>();
-        operations.setRepository(new StatusRepository());
+        UpdateOperation<StatusModel> updateOperation = new UpdateOperation<>();
+        updateOperation.setRepository(new Repository<>());
 
-        StatusModel model = new StatusMapperImpl().entityToModel(updatedStatus);
-        boolean isCreated = operations.update(model);
+        boolean isUpdated = updateOperation.execute(new StatusMapperImpl().entityToModel(updatedStatus));
 
         JSONObject obj = new JSONObject();
-        obj.append("success", isCreated);
+        obj.append("success", isUpdated);
 
         return Response
                 .ok()
@@ -74,6 +76,17 @@ public class StatusController {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(String filtersJson) {
+        List<Status> filteredStatuses = retrieveStatuses(filtersJson);
+
+        String jsonToReturn = new Jackson().fromListToJson(filteredStatuses);
+
+        return Response
+                .ok()
+                .entity(jsonToReturn)
+                .build();
+    }
+
+    public List<Status> retrieveStatuses(String filtersJson) {
         Map<String, Pair<String, Object>> filters = new HashMap<>();
         JSONObject filtersToConvert = new JSONObject(filtersJson);
 
@@ -84,18 +97,17 @@ public class StatusController {
                 filters.put(key, new Pair<>(keyPair, pair.get(keyPair)));
             }
         }
-        StorageOperations<StatusModel> operations = new StorageOperations<>();
-        operations.setRepository(new StatusRepository());
 
-        StatusModel model = new StatusModel();
-        List<Status> results = new StatusMapperImpl().toEntity(operations.get(model, filters, null), false);
+        GetOperation<StatusModel> getOperation = new GetOperation<>();
+        getOperation.setRepository(new Repository<>());
 
-        String jsonToReturn = new Jackson().fromListToJson(results);
+        GetOperationRequest<StatusModel> getOperationRequest = new GetOperationRequest<>();
+        getOperationRequest.setModel(new StatusModel());
+        getOperationRequest.setFilters(filters);
+        getOperationRequest.setOrderByColumn(null);
 
-        return Response
-                .ok()
-                .entity(jsonToReturn)
-                .build();
+        List<Map<String, String>> results = getOperation.execute(getOperationRequest);
+        return new StatusMapperImpl().toEntity(results, false);
     }
 
     @DELETE
@@ -105,11 +117,11 @@ public class StatusController {
         Status statusToRemove = new Status();
         statusToRemove.setId(id);
 
-        StorageOperations<StatusModel> operations = new StorageOperations<>();
-        operations.setRepository(new StatusRepository());
+        DeleteOperation<StatusModel> deleteOperation = new DeleteOperation<>();
+        deleteOperation.setRepository(new Repository<>());
 
-        StatusModel model = new StatusMapperImpl().entityToModel(statusToRemove);
-        boolean isDeleted = operations.delete(model);
+        boolean isDeleted = deleteOperation.execute(new StatusMapperImpl().entityToModel(statusToRemove));
+
 
         JSONObject obj = new JSONObject();
         obj.put("success", isDeleted);
