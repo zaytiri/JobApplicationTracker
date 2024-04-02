@@ -45,4 +45,12 @@ public class Jackson {
 
         return mappedObject;
     }
+
+    public <T> String fromObjectToJson(T obj){
+        try {
+            return getMapper().writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
