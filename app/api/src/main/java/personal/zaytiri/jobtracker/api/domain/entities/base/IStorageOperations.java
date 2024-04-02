@@ -6,17 +6,15 @@ import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
 import java.util.List;
 import java.util.Map;
 
-public interface IStorageOperations<T> {
+public interface IStorageOperations<M> {
 
-    boolean create();
+    boolean create(M model);
 
-    boolean delete();
+    boolean delete(M model);
 
-    boolean exists();
+//    boolean exists();
 
-    List<T> get(Map<String, Pair<String, Object>> filters, Pair<String, String> orderByColumn);
+    List<Map<String, String>> get(M model, Map<String, Pair<String, Object>> filters, Pair<String, String> orderByColumn);
 
-    T get();
-
-    boolean update();
+    boolean update(M model);
 }
