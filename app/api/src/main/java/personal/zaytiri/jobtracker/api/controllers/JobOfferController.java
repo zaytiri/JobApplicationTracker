@@ -3,11 +3,18 @@ package personal.zaytiri.jobtracker.api.controllers;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
+import personal.zaytiri.jobtracker.api.domain.entities.StorageOperations;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
+import personal.zaytiri.jobtracker.api.libraries.WebScraper;
+import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
+import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
+import personal.zaytiri.jobtracker.persistence.repositories.JobOfferRepository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +26,19 @@ public class JobOfferController {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(String jobOffer) {
-        JobOffer newJobOffer = new JobOffer().getInstance();
+        JobOffer newJobOffer = new JobOffer();
 
         Jackson convert = new Jackson();
         convert.fromJsonToObject(jobOffer, newJobOffer);
 
-        boolean isCreated = newJobOffer.create();
+        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
+        operations.setRepository(new JobOfferRepository());
+
+        JobOfferModel model = new JobOfferMapperImpl().entityToModel(newJobOffer);
+        boolean isCreated = operations.create(model);
 
         JSONObject obj = new JSONObject();
-        obj.append("success", isCreated);
+        obj.put("success", isCreated);
 
         return Response
                 .ok()
@@ -40,16 +51,20 @@ public class JobOfferController {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, String jobOffer) {
-        JobOffer newJobOffer = new JobOffer().getInstance();
+        JobOffer newJobOffer = new JobOffer();
         newJobOffer.setId(id);
 
         Jackson convert = new Jackson();
         convert.fromJsonToObject(jobOffer, newJobOffer);
 
-        boolean isCreated = newJobOffer.update();
+        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
+        operations.setRepository(new JobOfferRepository());
+
+        JobOfferModel model = new JobOfferMapperImpl().entityToModel(newJobOffer);
+        boolean isCreated = operations.update(model);
 
         JSONObject obj = new JSONObject();
-        obj.append("success", isCreated);
+        obj.put("success", isCreated);
 
         return Response
                 .ok()
@@ -62,7 +77,6 @@ public class JobOfferController {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(String filtersJson) {
-
         Map<String, Pair<String, Object>> filters = new HashMap<>();
         JSONObject filtersToConvert = new JSONObject(filtersJson);
 
@@ -73,9 +87,11 @@ public class JobOfferController {
                 filters.put(key, new Pair<>(keyPair, pair.get(keyPair)));
             }
         }
+        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
+        operations.setRepository(new JobOfferRepository());
 
-        JobOffer jobOffer = new JobOffer().getInstance();
-        List<JobOffer> results = jobOffer.get(filters, null);
+        JobOfferModel model = new JobOfferModel();
+        List<JobOffer> results = new JobOfferMapperImpl().toEntity(operations.get(model, filters, null), false);
 
         String jsonToReturn = new Jackson().fromListToJson(results);
 
@@ -90,13 +106,17 @@ public class JobOfferController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response remove(@PathParam("id") int id) {
 
-        JobOffer jobOfferToRemove = new JobOffer().getInstance();
+        JobOffer jobOfferToRemove = new JobOffer();
         jobOfferToRemove.setId(id);
 
-        boolean idDeleted = jobOfferToRemove.delete();
+        StorageOperations<JobOfferModel> operations = new StorageOperations<>();
+        operations.setRepository(new JobOfferRepository());
+
+        JobOfferModel model = new JobOfferMapperImpl().entityToModel(jobOfferToRemove);
+        boolean isDeleted = operations.delete(model);
 
         JSONObject obj = new JSONObject();
-        obj.append("success", idDeleted);
+        obj.put("success", isDeleted);
 
         return Response
                 .ok()
