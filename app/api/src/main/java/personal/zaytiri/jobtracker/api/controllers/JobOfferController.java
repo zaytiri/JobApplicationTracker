@@ -14,6 +14,7 @@ import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraper;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraperFactory;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
+import personal.zaytiri.jobtracker.api.statistics.*;
 import personal.zaytiri.jobtracker.persistence.DatabaseShema;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
 import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
@@ -125,7 +126,6 @@ public class JobOfferController {
         List<JobOffer> foundJobOffers = new ArrayList<>();
         try {
             foundJobOffers = combinedFuture.get();
-            System.out.println("Merged List: " + foundJobOffers);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -205,10 +205,21 @@ public class JobOfferController {
     @Path("/job-offer-by-status")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getJobOffersByStatus(){
+        var mapped = retrieveJobOffersByStatus();
+
+        JSONArray array = new JSONArray();
+        for (var elem : mapped.values()){
+            array.put(elem);
+        }
+        return Response.ok().entity(array.toString()).build();
+    }
+
+    
+
+    private HashMap<Integer, JSONObject> retrieveJobOffersByStatus(){
         List<JobOffer> jobOffers = retrieveJobOffers("{}");
         List<Status> statuses = new StatusController().retrieveStatuses("{}");
 
-        JSONArray array = new JSONArray();
         HashMap<Integer, JSONObject> mapped = new HashMap<>();
 
         JSONObject defaultStatus = new JSONObject();
@@ -238,13 +249,8 @@ public class JobOfferController {
             status.put("cards", cards);
         }
 
-        for (var elem : mapped.values()){
-            array.put(elem);
-        }
-
-        return Response.ok().entity(array.toString()).build();
+        return mapped;
     }
-
     private List<JobOffer> retrieveJobOffers(String filtersJson) {
         Map<String, Pair<String, Object>> filters = new HashMap<>();
         JSONObject filtersToConvert = new JSONObject(filtersJson);
