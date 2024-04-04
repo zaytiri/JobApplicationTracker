@@ -214,7 +214,25 @@ public class JobOfferController {
         return Response.ok().entity(array.toString()).build();
     }
 
-    
+    @GET
+    @Path("/statistics")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatistics(){
+        var mapped = retrieveJobOffersByStatus();
+
+        Statistics stats = new Statistics();
+        stats.addStatistic(new TotalAppliedJobsByMonth());
+        stats.addStatistic(new TotalAppliedJobsByDay());
+        stats.addStatistic(new TotalAppliedJobs());
+        stats.addStatistic(new TotalJobs());
+        stats.addStatistic(new TotalJobsByStatus());
+
+        Map<String, List<IStatistic<JobOffer>>> calculatedStats = stats.process();
+
+        var result = new Jackson().fromObjectToJson(calculatedStats);
+
+        return Response.ok().entity(result).build();
+    }
 
     private HashMap<Integer, JSONObject> retrieveJobOffersByStatus(){
         List<JobOffer> jobOffers = retrieveJobOffers("{}");
