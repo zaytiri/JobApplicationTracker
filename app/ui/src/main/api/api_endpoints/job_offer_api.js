@@ -60,3 +60,9 @@ export const find = async function(text) {
     return response.data;
   });
 };
+
+export const getStatistics = async function() {
+  return await axios.get(baseUrl + "statistics", headers).then((response) => {
+    return response.data;
+  });
+};

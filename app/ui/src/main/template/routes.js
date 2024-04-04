@@ -6,6 +6,7 @@ import Billing from "./views/Dashboard/Billing.js";
 import Profile from "./views/Dashboard/Profile.js";
 import { Home } from '../views/home/home.js';
 import { DraggableView } from '../views/draggable_view/draggable_view.js';
+import { Statistics } from '../views/statistics/statistics.js';
 
 import {
   HomeIcon,
@@ -33,7 +34,7 @@ var dashRoutes = [
     path: "/statistics",
     name: "Statistics",
     icon: <CreditIcon color='inherit' />,
-    component: Dashboard,
+    component: Statistics,
     layout: "/home",
   },
   {

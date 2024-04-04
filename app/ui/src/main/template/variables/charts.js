@@ -1,86 +1,114 @@
-export const barChartData = [
-  {
-    name: "Sales",
-    data: [15, 25, 28, 10, 25, 20],
-  },
-];
+export const barChartData = (totalJobsByStatus) => {
+  console.log(totalJobsByStatus)
+  if(totalJobsByStatus === undefined){
+    return;
+  }
 
-export const barChartOptions = {
-  chart: {
-    toolbar: {
-      show: false,
-    },
-  },
-  tooltip: {
-    theme: "dark",
-  },
-  xaxis: {
-    categories: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    labels: {
-      style: {
-        colors: "#A0AEC0",
-        fontSize: "12px",
-      },
-    },
-    show: true,
-    axisBorder: {
-      show: false,
-    },
-    
-  },
-  yaxis: {
-    show: true,
-    color: "#A0AEC0",
-    labels: {
-      show: true,
-      style: {
-        colors: "#A0AEC0",
-        fontSize: "14px",
-      },
-    },
-  },
-  fill: {
-    colors: "#ED8936",
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  grid: {
-    strokeDashArray: 5,
-  },
-  plotOptions: {
-    bar: {
-      borderRadius: 15,
-      columnWidth: "15px",
-    },
-  },
-  responsive: [
+  return [
     {
-      breakpoint: 768,
-      options: {
-        plotOptions: {
-          bar: {
-            borderRadius: 0,
+      name: "byStatus",
+      data: totalJobsByStatus.map(item => item.numberOfJobs),
+    },
+  ];
+}
+
+export const barChartOptions = (totalJobsByStatus) => {
+  console.log(totalJobsByStatus)
+  if(totalJobsByStatus === undefined){
+    return;
+  }
+
+  return {
+    chart: {
+      toolbar: {
+        show: false,
+      },
+    },
+    tooltip: {
+      theme: "dark",
+    },
+    xaxis: {
+      categories: totalJobsByStatus.map(item => item.status),
+      labels: {
+        style: {
+          colors: "#A0AEC0",
+          fontSize: "12px",
+        },
+      },
+      show: true,
+      axisBorder: {
+        show: false,
+      },
+      
+      
+    },
+    yaxis: {
+      show: true,
+      color: "#A0AEC0",
+      labels: {
+        show: true,
+        style: {
+          colors: "#A0AEC0",
+          fontSize: "14px",
+        },
+        formatter: function (val) {
+          return Math.round(val);
+        }
+      },
+      forceNiceScale: true
+    },
+    fill: {
+      colors: "#ED8936",
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    grid: {
+      strokeDashArray: 5,
+    },
+    plotOptions: {
+      bar: {
+        borderRadius: 15,
+        columnWidth: "15px",
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 768,
+        options: {
+          plotOptions: {
+            bar: {
+              borderRadius: 0,
+            },
           },
         },
       },
+    ],
+  }
+}
+
+export const lineChartData = (totalJobByDay) => {
+  console.log(totalJobByDay)
+  if(totalJobByDay === undefined){
+    return;
+  }
+
+  return [
+    {
+      name: "Applied",
+      data: totalJobByDay.map(item => item.numberOfAppliedJobsByDay),
     },
-  ],
+  ]
 };
 
-export const lineChartData = [
-  {
-    name: "Mobile apps",
-    data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-  },
-  {
-    name: "Websites",
-    data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
-  },
-];
+export const lineChartOptions = (totalJobByDay) => {
+  console.log(totalJobByDay)
+  if(totalJobByDay === undefined){
+    return;
+  }
 
-export const lineChartOptions = {
-  chart: {
+  return {
+    chart: {
     toolbar: {
       show: false,
     },
@@ -96,20 +124,7 @@ export const lineChartOptions = {
   },
   xaxis: {
     type: "datetime",
-    categories: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
+    categories: totalJobByDay.map(item => new Date(item.date)),
     axisTicks: {
       show: false
     },
@@ -151,4 +166,5 @@ export const lineChartOptions = {
     colors: ["#fff", "#3182CE"],
   },
   colors: ["#fff", "#3182CE"],
-};
+}
+}
