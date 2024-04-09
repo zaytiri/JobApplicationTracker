@@ -8,23 +8,19 @@ import {
   Button,
   Spacer,
   Collapse,
-  Avatar,
   Box,
-  Image,
-  useColorMode,
   Link,
 } from "@chakra-ui/react";
-// Custom components
+
 import Card from "../../template/components/Card/Card.js";
 import CardBody from "../../template/components/Card/CardBody.js";
 import CardHeader from "../../template/components/Card/CardHeader.js";
-import bgAdmin from "../../template/assets/img/admin-background.png";
 
 import { remove } from "../../api/api_endpoints/job_offer_api.js"
+import { EditJobOffer } from "../../popups/edit_job_offer.js";
 
 export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle }) => {
   const textColor = useColorModeValue("gray.700", "white");
-  const { colorMode } = useColorMode();
 
   const formatDescription = (text) => {
     if (typeof text === 'undefined') {
@@ -54,10 +50,8 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   }
 
   const hexToRgb = (hex) => {
-    // Remove the leading '#' if present
     hex = hex.replace(/^#/, '');
 
-    // Parse the hex color to get RGB values
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
     const g = (bigint >> 8) & 255;
@@ -86,9 +80,9 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
               Get updates
             </Button>
             <Spacer />
-            <Button variant="primary">
-              EDIT
-            </Button>
+            <EditJobOffer
+            currentJobOffer={currentJobOffer}
+            />
           </Flex>
         </Box>
 

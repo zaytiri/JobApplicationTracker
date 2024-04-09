@@ -1,0 +1,213 @@
+import React, { useState, useEffect } from "react";
+// Chakra imports
+import {
+    Button,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    FormControl,
+    FormLabel,
+    Input,
+    ModalBody,
+    ModalFooter,
+    Grid,
+    Select,
+    Textarea,
+    Switch,
+    Divider,
+    Flex,
+
+} from "@chakra-ui/react";
+import { format, min } from 'date-fns';
+
+import { update } from "../api/api_endpoints/job_offer_api.js"
+import { createJobOfferObject } from "../api/entities/job_offer.js"
+import { get } from "../api/api_endpoints/status_api.js"
+
+export const EditJobOffer = ({ currentJobOffer }) => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
+    const initialRef = React.useRef(null);
+    const finalRef = React.useRef(null);
+
+    const [status, setStatus] = useState([])
+
+    const [company, setCompany] = useState('')
+    const [role, setRole] = useState('')
+    const [link, setLink] = useState('')
+    const [description, setDescription] = useState('')
+    const [location, setLocation] = useState('')
+    const [companyWebsite, setCompanyWebsite] = useState('')
+    const [applied, setApplied] = useState(false)
+    const [statusId, setStatusId] = useState(0)
+    const [appliedAt, setAppliedAt] = useState(new Date())
+    const [notes, setNotes] = useState('')
+
+    const editJobOffer = async () => {
+        const obj = createJobOfferObject({ company, role, link, description, location, companyWebsite, appliedAt, statusId });
+
+        const response = await update(obj);
+
+        if (response.success === false) return null;
+
+        onClose();
+    }
+
+    useEffect(() => {
+        const setData = async () => {
+            setModalInformation();
+        };
+
+        setData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await get({});
+                setStatus(response);
+            } catch (error) {
+                console.error("Error fetching job offers:", error);
+            }
+        };
+
+        if (isOpen) {
+            fetchData();
+        }
+    }, [isOpen]);
+
+    const setModalInformation = () => {
+        setCompany(currentJobOffer.company);
+        setRole(currentJobOffer.role);
+        setLocation(currentJobOffer.location);
+        setDescription(currentJobOffer.description);
+        setLink(currentJobOffer.link);
+        setCompanyWebsite(currentJobOffer.companyWebsite);
+        setApplied(currentJobOffer.appliedAt[0] < 0 ? false : true);
+        setAppliedAt(getFormattedDate(currentJobOffer.appliedAt));
+        setStatusId(currentJobOffer.statusId);
+        setNotes(currentJobOffer.interviewNotes);
+    }
+
+    const setStatusApplied = () => {
+        setApplied(!applied)
+        
+        if(applied){
+            setAppliedAt(getFormattedDate(''))
+        }else{
+            setAppliedAt(getFormattedDate(new Date()))
+        }
+    }
+    
+    const getFormattedDate = (dateToFormat) => {
+        console.log(dateToFormat)
+        if(dateToFormat?.length < 0 || dateToFormat === '' || dateToFormat === undefined){
+            return '';
+        }
+        
+        let date = dateToFormat
+        if(dateToFormat?.length > 0){
+            date = new Date(dateToFormat[0], dateToFormat[1] - 1, dateToFormat[2], dateToFormat[3], dateToFormat[4], dateToFormat[5]);
+        }
+
+        const day = date.getDay().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 because January is 0
+        const year = date.getFullYear();
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+
+        return `${year}-${month}-${day}T${hour}:${minute}`;
+    }
+
+    return (
+        <>
+            <Button variant="primary" onClick={onOpen}>
+                EDIT
+            </Button>
+
+            <Modal
+                initialFocusRef={initialRef}
+                finalFocusRef={finalRef}
+                isOpen={isOpen}
+                onClose={onClose}
+                size="xl"
+                onOverlayClick={setModalInformation}
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Edit {currentJobOffer.company} Job Offer</ModalHeader>
+                    <ModalCloseButton onClick={setModalInformation} />
+                    <ModalBody pb={6}>
+                        <FormControl>
+                            <FormLabel>Job Offer URL</FormLabel>
+                            <Input value={link} placeholder='www.job-offer-for-google-from-linkedin.com' />
+                        </FormControl>
+                        <Divider mt='10px' mb='10px' />
+                        <Grid
+                            templateColumns={{ sm: "1fr", lg: "2fr 1fr" }}
+                            templateRows={{ lg: "repeat(4, auto)" }}
+                            gap='20px'>
+                            <FormControl>
+                                <FormLabel>Company</FormLabel>
+                                <Input value={company} onChange={(event) => setCompany(event.target.value)} ref={initialRef} placeholder='Google' />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Role</FormLabel>
+                                <Input value={role} onChange={(event) => setRole(event.target.value)} placeholder='Developer' />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Location</FormLabel>
+                                <Input value={location} onChange={(event) => setLocation(event.target.value)} placeholder='Switzerland' />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Status</FormLabel>
+                                <Select onChange={(event) => setStatusId(event.target.value)} placeholder='Select option'>
+                                    {status?.length > 0 && status.map((row) => {
+                                        return (
+                                            <option key={row.id} value={row.id}>{row.name}</option>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Company Website</FormLabel>
+                                <Input value={companyWebsite} onChange={(event) => setCompanyWebsite(event.target.value)} placeholder='www.companywebsite.com' />
+                            </FormControl>
+                        </Grid>
+                        <FormControl>
+                            <FormLabel>Description</FormLabel>
+                            <Textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder='This job requires C#, Java and React.' />
+                        </FormControl>
+                        <Flex>
+                            <FormControl display='flex' alignItems='center' mt="5px">
+                                <FormLabel mb='0'>
+                                    Applied?
+                                </FormLabel>
+                                <Switch onChange={() => setStatusApplied()} isChecked={applied}/>
+                            </FormControl>
+                            <FormControl display='flex' alignItems='center' mt="5px">
+                                <FormLabel mb='0'>
+                                    Applied At
+                                </FormLabel>
+                                <Input type="datetime-local" onChange={(event) => setAppliedAt(event.target.value)} value={appliedAt} />
+                            </FormControl>
+                        </Flex>
+                        <FormControl>
+                            <FormLabel>Notes</FormLabel>
+                            <Textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder='Some notes about the interview or the job.' />
+                        </FormControl>
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={editJobOffer}>
+                            Add
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    )
+}

@@ -9,11 +9,11 @@ export const createJobOfferObject = function (props) {
         link,
         description,
         applied,
+        appliedAt,
         interviewNotes,
         statusId } = props;
 
-    let appliedAt = null;
-    if (applied) {
+    if (appliedAt === undefined && applied) {
         appliedAt = new Date();
     }
 
