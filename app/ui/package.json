@@ -50,7 +50,8 @@
     "react-tagsinput": "3.20.3",
     "sass": "^1.56.1",
     "stylis": "^4.0.10",
-    "stylis-plugin-rtl": "^2.1.1"
+    "stylis-plugin-rtl": "^2.1.1",
+    "vis-network": "^9.1.9"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
