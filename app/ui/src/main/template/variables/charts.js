@@ -6,7 +6,7 @@ export const barChartData = (totalJobsByStatus) => {
 
   return [
     {
-      name: "byStatus",
+      name: "Number of Jobs",
       data: totalJobsByStatus.map(item => item.numberOfJobs),
     },
   ];
@@ -87,26 +87,27 @@ export const barChartOptions = (totalJobsByStatus) => {
   }
 }
 
-export const lineChartData = (totalJobByDay) => {
+export function lineChartData (totalJobByDay) {
   console.log(totalJobByDay)
   if(totalJobByDay === undefined){
     return;
   }
-
+  
   return [
     {
       name: "Applied",
       data: totalJobByDay.map(item => item.numberOfAppliedJobsByDay),
-    },
-  ]
-};
+    }
+  ];
+}
 
-export const lineChartOptions = (totalJobByDay) => {
+export function lineChartOptions (totalJobByDay) {
   console.log(totalJobByDay)
   if(totalJobByDay === undefined){
     return;
   }
 
+  const sortedDays = totalJobByDay.map(item => new Date(item.date).toISOString().substring(0, 10))
   return {
     chart: {
     toolbar: {
@@ -124,7 +125,7 @@ export const lineChartOptions = (totalJobByDay) => {
   },
   xaxis: {
     type: "datetime",
-    categories: totalJobByDay.map(item => new Date(item.date)),
+    categories: sortedDays.sort((a, b) => new Date(a) - new Date(b)),
     axisTicks: {
       show: false
     },
@@ -166,5 +167,5 @@ export const lineChartOptions = (totalJobByDay) => {
     colors: ["#fff", "#3182CE"],
   },
   colors: ["#fff", "#3182CE"],
-}
+};
 }
