@@ -164,7 +164,7 @@ export const EditJobOffer = ({ currentJobOffer }) => {
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Status</FormLabel>
-                                <Select onChange={(event) => setStatusId(event.target.value)} placeholder='Select option'>
+                                <Select onChange={(event) => setStatusId(event.target.value)} placeholder='Select option' value={statusId}>
                                     {status?.length > 0 && status.map((row) => {
                                         return (
                                             <option key={row.id} value={row.id}>{row.name}</option>
