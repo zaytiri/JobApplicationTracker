@@ -6,7 +6,5 @@ import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.jobtracker.persistence.repositories.interfaces.IStatusRepository;
 
 public class StatusRepository extends Repository<StatusModel> implements IStatusRepository {
-    @Inject
-    public StatusRepository() {
-    }
+
 }
