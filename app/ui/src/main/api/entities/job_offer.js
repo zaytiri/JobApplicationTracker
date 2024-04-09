@@ -1,19 +1,19 @@
 
-export const createJobOfferObject = function(props) {
+export const createJobOfferObject = function (props) {
 
-    const { 
-        company, 
-        role, 
-        companyWebsite, 
+    const {
+        company,
+        role,
+        companyWebsite,
         location,
         link,
         description,
         applied,
         interviewNotes,
         statusId } = props;
-    
+
     let appliedAt = null;
-    if(applied){
+    if (applied) {
         appliedAt = new Date();
     }
 

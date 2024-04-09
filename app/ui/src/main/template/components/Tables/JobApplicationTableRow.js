@@ -22,6 +22,11 @@ function JobApplicationTableRow(props) {
     return num < 10 ? `0${num}` : num;
   };
 
+  const getDate = () => {
+    var date = new Date(applied[0], applied[1] - 1, applied[2], applied[3], applied[4], applied[5])
+    return new Date(date).toLocaleString() + ' UTC'
+  }
+  
   return (
     <Tr>
       <Td
@@ -57,7 +62,7 @@ function JobApplicationTableRow(props) {
               {applied[0] < 0 && 'Not yet Applied'}
             </Text>
             <Text fontSize="sm" color="gray.400" fontWeight="normal">
-              {applied[0] > 0 && 'Applied ' + formatDistanceToNow(new Date(applied[0], applied[1] - 1, applied[2], applied[3], applied[4], applied[5]), { addSuffix: true, includeSeconds: true })}
+              {applied[0] > 0 && 'Applied ' + formatDistanceToNow(getDate(), { addSuffix: true, includeSeconds: true })}
             </Text>
           </Flex>
         </Flex>
