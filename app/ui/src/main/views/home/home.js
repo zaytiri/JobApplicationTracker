@@ -44,18 +44,18 @@ export const Home = () => {
 
   const moreAction = (id) => {
     setCurrentJobOffer(jobOffers.find((jobOffer) => { return jobOffer.id === id }));
-    
-    if (!isOpen){
+
+    if (!isOpen) {
       onToggle();
-    }else{
-      if(id === currentJobOffer.id){
+    } else {
+      if (id === currentJobOffer.id) {
         onToggle();
       }
     }
   }
 
   const getStatusById = (id) => {
-    return status.find((status) => { return status.id === id});
+    return status.find((status) => { return status.id === id });
   }
 
   const [fetchDataAgain, setFetchDataAgain] = useState(true);
@@ -86,7 +86,7 @@ export const Home = () => {
   const findText = async (text) => {
     console.log(text);
 
-    if(text === ''){
+    if (text === '') {
       setJobOffers(originalJobOffers);
       return;
     }
@@ -112,7 +112,7 @@ export const Home = () => {
         borderRadius='20px'
         gap='20px'>
 
-        <SearchBar me='18px' findText={findText}/>
+        <SearchBar me='18px' findText={findText} />
 
         <AddJobOffer setFetchDataAgain={setFetchDataAgain} />
 
@@ -129,7 +129,7 @@ export const Home = () => {
               <Text fontSize="xl" color={textColor} fontWeight="bold">
                 Job Applications
               </Text>
-              
+
             </Flex>
           </CardHeader>
           <CardBody>
@@ -183,18 +183,18 @@ export const Home = () => {
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             position: 'relative',
-            // right: '15px',
           }}
         >
           <MoreInfo
+            key={currentJobOffer.id}
             currentJobOffer={currentJobOffer}
             currentStatus={getStatusById(currentJobOffer.statusId)}
             jobOffers={jobOffers}
             setJobOffers={setGlobalJobOffers}
-            onToggle={onToggle} />
+            onToggle={onToggle}
+            isOpen={isOpen} />
         </motion.div>
       </Grid>
-
 
     </Flex>
   );

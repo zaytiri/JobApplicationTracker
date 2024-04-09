@@ -17,9 +17,10 @@ import CardBody from "../../template/components/Card/CardBody.js";
 import CardHeader from "../../template/components/Card/CardHeader.js";
 
 import { remove } from "../../api/api_endpoints/job_offer_api.js"
+import { StatusGraph } from "./graph_view.js";
 import { EditJobOffer } from "../../popups/edit_job_offer.js";
 
-export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle }) => {
+export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle, isOpen }) => {
   const textColor = useColorModeValue("gray.700", "white");
 
   const formatDescription = (text) => {
@@ -112,6 +113,9 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
       </CardHeader>
 
       <CardBody px='5px' height="100%">
+
+        {isOpen && <StatusGraph />}
+
         <Flex direction='column' height="100%">
           <Button variant="primary" mt='15px' mb='15px'>
             <Link href={currentJobOffer.link} isExternal>
@@ -169,6 +173,9 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
               Show {show ? 'Less' : 'More'}
             </Button>
           </Text>
+
+
+
           <Flex justifyContent='right'>
             <Button variant="danger" onChange={() => removeJobOffer(currentJobOffer.id)}>
               DELETE
