@@ -203,7 +203,7 @@ export const EditJobOffer = ({ currentJobOffer }) => {
 
                     <ModalFooter>
                         <Button colorScheme='blue' mr={3} onClick={editJobOffer}>
-                            Add
+                            Edit
                         </Button>
                     </ModalFooter>
                 </ModalContent>
