@@ -25,7 +25,7 @@ import {
 import { update } from "../api/api_endpoints/job_offer_api.js"
 import { get } from "../api/api_endpoints/status_api.js"
 
-export const EditJobOffer = ({ currentJobOffer }) => {
+export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     const initialRef = React.useRef(null);
@@ -62,7 +62,9 @@ export const EditJobOffer = ({ currentJobOffer }) => {
 
         if (response.success === false) return null;
 
+        setFetchDataAgain(true)
         onClose();
+        closeModal();
     }
 
     useEffect(() => {

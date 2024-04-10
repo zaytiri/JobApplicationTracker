@@ -188,7 +188,8 @@ export const Home = () => {
             jobOffers={jobOffers}
             setJobOffers={setGlobalJobOffers}
             onToggle={onToggle}
-            isOpen={isOpen} />
+            isOpen={isOpen}
+            setFetchDataAgain={setFetchDataAgain} />
         </motion.div>
       </Grid>
 

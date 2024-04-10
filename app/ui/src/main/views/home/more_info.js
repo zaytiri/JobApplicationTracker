@@ -20,7 +20,7 @@ import { remove } from "../../api/api_endpoints/job_offer_api.js"
 import { StatusGraph } from "./graph_view.js";
 import { EditJobOffer } from "../../popups/edit_job_offer.js";
 
-export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle, isOpen }) => {
+export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle, isOpen, setFetchDataAgain }) => {
   const textColor = useColorModeValue("gray.700", "white");
 
   const formatDescription = (text) => {
@@ -83,6 +83,8 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
             <Spacer />
             <EditJobOffer
             currentJobOffer={currentJobOffer}
+            setFetchDataAgain={setFetchDataAgain}
+            closeModal={onToggle}
             />
           </Flex>
         </Box>
