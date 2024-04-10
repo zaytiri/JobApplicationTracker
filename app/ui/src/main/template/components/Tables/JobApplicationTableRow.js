@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Badge,
   Button,
   Flex,
@@ -23,7 +22,11 @@ function JobApplicationTableRow(props) {
   };
 
   const getDate = () => {
-    var date = new Date(applied[0], applied[1] - 1, applied[2], applied[3], applied[4], applied[5])
+    if(applied === undefined || applied?.length < 0 || applied === 'Invalid Date Time'){
+      return null
+    }
+
+    var date = new Date(applied[0], applied[1] - 1, applied[2], applied[3], applied[4], 0)
     return new Date(date).toLocaleString() + ' UTC'
   }
   
@@ -58,11 +61,11 @@ function JobApplicationTableRow(props) {
               fontWeight="bold"
               minWidth="100%"
             >
-              {applied[0] > 0 && applied[0] + '-' + formatNumber(applied[1]) + '-' + formatNumber(applied[2])}
-              {applied[0] < 0 && 'Not yet Applied'}
+              {(applied !== undefined && applied !== 'Invalid Date Time' && applied[0] > 0) && applied[0] + '-' + formatNumber(applied[1]) + '-' + formatNumber(applied[2])}
+              {(applied === undefined || applied === 'Invalid Date Time' || applied[0] < 0) && 'Not yet Applied'}
             </Text>
             <Text fontSize="sm" color="gray.400" fontWeight="normal">
-              {applied[0] > 0 && 'Applied ' + formatDistanceToNow(getDate(), { addSuffix: true, includeSeconds: true })}
+              {(applied !== undefined && applied !== 'Invalid Date Time' && applied[0] > 0) && 'Applied ' + formatDistanceToNow(getDate(), { addSuffix: true, includeSeconds: true })}
             </Text>
           </Flex>
         </Flex>

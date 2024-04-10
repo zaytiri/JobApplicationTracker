@@ -21,10 +21,8 @@ import {
     Flex,
 
 } from "@chakra-ui/react";
-import { format, min } from 'date-fns';
 
 import { update } from "../api/api_endpoints/job_offer_api.js"
-import { createJobOfferObject } from "../api/entities/job_offer.js"
 import { get } from "../api/api_endpoints/status_api.js"
 
 export const EditJobOffer = ({ currentJobOffer }) => {
@@ -47,9 +45,20 @@ export const EditJobOffer = ({ currentJobOffer }) => {
     const [notes, setNotes] = useState('')
 
     const editJobOffer = async () => {
-        const obj = createJobOfferObject({ company, role, link, description, location, companyWebsite, appliedAt, statusId });
+        const obj =
+        {
+            company: company,
+            role: role,
+            companyWebsite: companyWebsite,
+            location: location,
+            link: link,
+            description: description,
+            appliedAt: appliedAt === '' ? new Date(appliedAt) : new Date(appliedAt).toISOString(),
+            statusId: statusId.toString(),
+            interviewNotes: notes,
+        }
 
-        const response = await update(obj);
+        const response = await update(currentJobOffer.id, obj);
 
         if (response.success === false) return null;
 
@@ -70,7 +79,6 @@ export const EditJobOffer = ({ currentJobOffer }) => {
                 const response = await get({});
                 setStatus(response);
             } catch (error) {
-                console.error("Error fetching job offers:", error);
             }
         };
 
@@ -86,7 +94,7 @@ export const EditJobOffer = ({ currentJobOffer }) => {
         setDescription(currentJobOffer.description);
         setLink(currentJobOffer.link);
         setCompanyWebsite(currentJobOffer.companyWebsite);
-        setApplied(currentJobOffer.appliedAt[0] < 0 ? false : true);
+        setApplied(currentJobOffer.appliedAt === undefined || currentJobOffer.appliedAt[0] < 0 ? false : true);
         setAppliedAt(getFormattedDate(currentJobOffer.appliedAt));
         setStatusId(currentJobOffer.statusId);
         setNotes(currentJobOffer.interviewNotes);
@@ -98,28 +106,30 @@ export const EditJobOffer = ({ currentJobOffer }) => {
         if(applied){
             setAppliedAt(getFormattedDate(''))
         }else{
-            setAppliedAt(getFormattedDate(new Date()))
+            setAppliedAt(getFormattedDate(new Date(Date.now())))
         }
     }
     
     const getFormattedDate = (dateToFormat) => {
-        console.log(dateToFormat)
-        if(dateToFormat?.length < 0 || dateToFormat === '' || dateToFormat === undefined){
+        if(dateToFormat?.length < 0 || dateToFormat === '' || dateToFormat === undefined || applied === 'Invalid Date Time'){
             return '';
         }
         
         let date = dateToFormat
         if(dateToFormat?.length > 0){
-            date = new Date(dateToFormat[0], dateToFormat[1] - 1, dateToFormat[2], dateToFormat[3], dateToFormat[4], dateToFormat[5]);
+            date = new Date(dateToFormat[0], dateToFormat[1] - 1, dateToFormat[2], dateToFormat[3], dateToFormat[4], 0);
+            date = new Date(date).toLocaleString()
+            date = new Date(new Date(date).toLocaleString() + ' UTC')
         }
-
-        const day = date.getDay().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 because January is 0
+        
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
-
-        return `${year}-${month}-${day}T${hour}:${minute}`;
+        
+        const formattedDate = `${year}-${month}-${day}T${hour}:${minute}`;
+        return formattedDate
     }
 
     return (
