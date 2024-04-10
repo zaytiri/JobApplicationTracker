@@ -106,7 +106,7 @@ public class JobOfferModel extends Model {
         values.add(new Pair<>(schema.linkColumnName, link));
         values.add(new Pair<>(schema.descriptionColumnName, description));
         values.add(new Pair<>(schema.appliedAtColumnName, appliedAt));
-        values.add(new Pair<>(schema.statusTableName, statusId));
+        values.add(new Pair<>(schema.statusIdColumnName, statusId));
         values.add(new Pair<>(schema.interviewNotesColumnName, interviewNotes));
         values.add(new Pair<>(schema.updatedAtColumnName, updatedAt));
         values.add(new Pair<>(schema.createdAtColumnName, createdAt));
