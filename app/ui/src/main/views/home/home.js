@@ -10,7 +10,6 @@ import {
   Tr,
   useColorModeValue,
   Grid,
-  Spacer,
   useDisclosure,
 } from "@chakra-ui/react";
 // Custom components
@@ -68,7 +67,6 @@ export const Home = () => {
         const statusResponse = await getStatus({});
         setStatus(statusResponse);
       } catch (error) {
-        console.error("Error fetching job offers:", error);
       }
     };
 
@@ -84,8 +82,6 @@ export const Home = () => {
   }
 
   const findText = async (text) => {
-    console.log(text);
-
     if (text === '') {
       setJobOffers(originalJobOffers);
       return;
@@ -147,7 +143,7 @@ export const Home = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {jobOffers?.length > 0 && status?.length > 0 && jobOffers.map((row, index) => {
+                {jobOffers?.length > 0 && jobOffers.map((row, index) => {
                   return (
                     <JobApplicationTableRow
                       company={row.company}
