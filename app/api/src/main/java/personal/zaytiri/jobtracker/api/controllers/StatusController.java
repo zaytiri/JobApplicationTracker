@@ -36,6 +36,7 @@ public class StatusController {
         createOperation.setRepository(new Repository<>());
 
         boolean isCreated = createOperation.execute(new StatusMapperImpl().entityToModel(newStatus));
+        boolean isCreated = createOperation.execute(new StatusMapperImpl().entityToModel(newStatus)).isCreated();
 
         JSONObject obj = new JSONObject();
         obj.append("success", isCreated);

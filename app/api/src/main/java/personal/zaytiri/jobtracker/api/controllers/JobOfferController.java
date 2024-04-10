@@ -46,9 +46,10 @@ public class JobOfferController {
         createOperation.setRepository(new Repository<>());
 
         boolean isCreated = createOperation.execute(new JobOfferMapperImpl().entityToModel(newJobOffer));
+        CreateOperationResponse createJobOfferResponse = createOperation.execute(new JobOfferMapperImpl().entityToModel(newJobOffer));
 
         JSONObject obj = new JSONObject();
-        obj.put("success", isCreated);
+        obj.put("success", createJobOfferResponse.isCreated());
 
         return Response
                 .ok()
