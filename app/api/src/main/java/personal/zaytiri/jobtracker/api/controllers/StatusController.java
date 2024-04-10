@@ -4,14 +4,15 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.json.JSONObject;
-import personal.zaytiri.jobtracker.api.database.operations.CreateOperation;
-import personal.zaytiri.jobtracker.api.database.operations.DeleteOperation;
-import personal.zaytiri.jobtracker.api.database.operations.GetOperation;
-import personal.zaytiri.jobtracker.api.database.operations.UpdateOperation;
+import personal.zaytiri.jobtracker.api.database.operations.*;
 import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
+import personal.zaytiri.jobtracker.api.domain.entities.JobOfferStatus;
 import personal.zaytiri.jobtracker.api.domain.entities.Status;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
+import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
+import personal.zaytiri.jobtracker.api.mappers.JobOfferStatusMapperImpl;
 import personal.zaytiri.jobtracker.api.mappers.StatusMapperImpl;
+import personal.zaytiri.jobtracker.persistence.models.JobOfferStatusModel;
 import personal.zaytiri.jobtracker.persistence.models.StatusModel;
 import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
@@ -35,7 +36,6 @@ public class StatusController {
         CreateOperation<StatusModel> createOperation = new CreateOperation<>();
         createOperation.setRepository(new Repository<>());
 
-        boolean isCreated = createOperation.execute(new StatusMapperImpl().entityToModel(newStatus));
         boolean isCreated = createOperation.execute(new StatusMapperImpl().entityToModel(newStatus)).isCreated();
 
         JSONObject obj = new JSONObject();
@@ -130,6 +130,24 @@ public class StatusController {
         return Response
                 .ok()
                 .entity(obj.toString())
+                .build();
+    }
+
+    @GET
+    @Path("/status-by-job-offer/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatusByJobId(@PathParam("id") int id) {
+
+        GetStatusesByJobOfferIdOperation getOperation = new GetStatusesByJobOfferIdOperation();
+        getOperation.setRepository(new Repository<>());
+
+        List<JobOfferStatus> results = new JobOfferStatusMapperImpl().toEntity(getOperation.execute(id), false);
+
+        String jsonToReturn = new Jackson().fromListToJson(results);
+
+        return Response
+                .ok()
+                .entity(jsonToReturn)
                 .build();
     }
 }

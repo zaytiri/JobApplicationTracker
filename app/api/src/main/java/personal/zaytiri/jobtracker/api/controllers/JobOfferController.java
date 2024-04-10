@@ -6,21 +6,27 @@ import jakarta.ws.rs.core.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import personal.zaytiri.jobtracker.api.database.operations.*;
+import personal.zaytiri.jobtracker.api.database.requests.CreateOperationResponse;
 import personal.zaytiri.jobtracker.api.database.requests.FindByTextOperationRequest;
 import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
+import personal.zaytiri.jobtracker.api.domain.entities.JobOfferStatus;
 import personal.zaytiri.jobtracker.api.domain.entities.Status;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraper;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraperFactory;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
+import personal.zaytiri.jobtracker.api.mappers.JobOfferStatusMapperImpl;
 import personal.zaytiri.jobtracker.api.statistics.*;
 import personal.zaytiri.jobtracker.persistence.DatabaseShema;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
+import personal.zaytiri.jobtracker.persistence.models.JobOfferStatusModel;
 import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
+import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Operators;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +51,19 @@ public class JobOfferController {
         CreateOperation<JobOfferModel> createOperation = new CreateOperation<>();
         createOperation.setRepository(new Repository<>());
 
-        boolean isCreated = createOperation.execute(new JobOfferMapperImpl().entityToModel(newJobOffer));
         CreateOperationResponse createJobOfferResponse = createOperation.execute(new JobOfferMapperImpl().entityToModel(newJobOffer));
+
+        if (createJobOfferResponse.isCreated() && newJobOffer.getStatusId() != 0) {
+            CreateOperation<JobOfferStatusModel> createJobOfferStatusOperation = new CreateOperation<>();
+            createJobOfferStatusOperation.setRepository(new Repository<>());
+
+            JobOfferStatus newJobOfferStatus = new JobOfferStatus();
+            newJobOfferStatus.setJobOfferId(createJobOfferResponse.getIdCreated());
+            newJobOfferStatus.setStatusId(newJobOffer.getStatusId());
+            newJobOfferStatus.setChangedAt(LocalDateTime.now());
+
+            createJobOfferStatusOperation.execute(new JobOfferStatusMapperImpl().entityToModel(newJobOfferStatus));
+        }
 
         JSONObject obj = new JSONObject();
         obj.put("success", createJobOfferResponse.isCreated());
@@ -62,6 +79,20 @@ public class JobOfferController {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, String jobOffer) {
+        Map<String, Pair<String, Object>> filters = new HashMap<>();
+        filters.put(DatabaseShema.getINSTANCE().idColumnName, new Pair<>(Operators.EQUALS.value, id));
+
+        GetOperation<JobOfferModel> getOperation = new GetOperation<>();
+        getOperation.setRepository(new Repository<>());
+
+        GetOperationRequest<JobOfferModel> getOperationRequest = new GetOperationRequest<>();
+        getOperationRequest.setModel(new JobOfferModel());
+        getOperationRequest.setFilters(filters);
+        getOperationRequest.setOrderByColumn(null);
+
+        List<Map<String, String>> results = getOperation.execute(getOperationRequest);
+        var oldJobOffer = new JobOfferMapperImpl().toEntity(results, false).get(0);
+
         JobOffer newJobOffer = new JobOffer();
         newJobOffer.setId(id);
 
@@ -72,6 +103,18 @@ public class JobOfferController {
         updateOperation.setRepository(new Repository<>());
 
         boolean isUpdated = updateOperation.execute(new JobOfferMapperImpl().entityToModel(newJobOffer));
+
+        if (isUpdated && oldJobOffer.getStatusId() != newJobOffer.getStatusId() && newJobOffer.getStatusId() != 0) {
+            CreateOperation<JobOfferStatusModel> createJobOfferStatusOperation = new CreateOperation<>();
+            createJobOfferStatusOperation.setRepository(new Repository<>());
+
+            JobOfferStatus newJobOfferStatus = new JobOfferStatus();
+            newJobOfferStatus.setJobOfferId(id);
+            newJobOfferStatus.setStatusId(newJobOffer.getStatusId());
+            newJobOfferStatus.setChangedAt(LocalDateTime.now());
+
+            createJobOfferStatusOperation.execute(new JobOfferStatusMapperImpl().entityToModel(newJobOfferStatus));
+        }
 
         JSONObject obj = new JSONObject();
         obj.put("success", isUpdated);
