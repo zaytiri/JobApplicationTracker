@@ -2,8 +2,6 @@ package personal.zaytiri.jobtracker.api.domain.entities;
 
 import personal.zaytiri.jobtracker.api.domain.entities.base.Entity;
 
-import java.time.LocalDateTime;
-
 public class Status extends Entity<Status> {
     private String name;
 

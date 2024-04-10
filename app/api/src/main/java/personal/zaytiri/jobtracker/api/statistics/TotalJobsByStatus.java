@@ -1,8 +1,5 @@
 package personal.zaytiri.jobtracker.api.statistics;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import personal.zaytiri.jobtracker.api.database.operations.GetOperation;
 import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
