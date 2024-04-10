@@ -42,3 +42,9 @@ export const remove = async function(id) {
     return response.data;
   });
 };
+
+export const getStatusByJobOfferId = async function(id) {
+  return await axios.get(baseUrl + "status-by-job-offer/" + id, headers).then((response) => {
+    return response.data;
+  });
+};

@@ -40,6 +40,9 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   }
   const [show, setShow] = useState(false)
   const handleToggleToShowDescription = () => setShow(!show)
+  
+  const [showGraph, setShowGraph] = useState(false)
+  const handleToggleToShowGraph = () => setShowGraph(!showGraph)
 
   const removeJobOffer = async (id) => {
     const response = await remove(id);
@@ -82,9 +85,9 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
             </Button>
             <Spacer />
             <EditJobOffer
-            currentJobOffer={currentJobOffer}
-            setFetchDataAgain={setFetchDataAgain}
-            closeModal={onToggle}
+              currentJobOffer={currentJobOffer}
+              setFetchDataAgain={setFetchDataAgain}
+              closeModal={onToggle}
             />
           </Flex>
         </Box>
@@ -116,7 +119,10 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
 
       <CardBody px='5px' height="100%">
 
-        {isOpen && <StatusGraph />}
+        <Button size='sm' onClick={handleToggleToShowGraph} mt='1rem'>
+          {showGraph ? 'Hide' : 'Show'} Activities
+        </Button>
+        {showGraph && isOpen && <StatusGraph jobOfferId={currentJobOffer.id} />}
 
         <Flex direction='column' height="100%">
           <Button variant="primary" mt='15px' mb='15px'>
