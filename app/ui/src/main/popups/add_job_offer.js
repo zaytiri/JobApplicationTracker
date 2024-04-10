@@ -24,7 +24,6 @@ import {
 } from "@chakra-ui/react";
 
 import { create, scrape } from "../api/api_endpoints/job_offer_api.js"
-import { createJobOfferObject } from "../api/entities/job_offer.js"
 import { get } from "../api/api_endpoints/status_api.js"
 
 export const AddJobOffer = ({ setFetchDataAgain }) => {
@@ -70,8 +69,17 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
     }
 
     const addJobOffer = async () => {
-        const obj = createJobOfferObject({ company, role, link, description, location, companyWebsite, applied, statusId });
-
+        const obj =
+        {
+            company: company,
+            role: role,
+            companyWebsite: companyWebsite,
+            location: location,
+            link: link,
+            description: description,
+            appliedAt: !applied ? null : new Date(applied),
+            statusId: statusId.toString(),
+        }
         const response = await create(obj);
 
         if (response.success === false) return null;
