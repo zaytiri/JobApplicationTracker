@@ -13,14 +13,17 @@ public class DatabaseShema {
     public String linkColumnName = "link";
     public String descriptionColumnName = "description";
     public String appliedAtColumnName = "applied_at";
-    public String statusIdColumnName = "status_id";
     public String interviewNotesColumnName = "interview_notes";
+
+    // job offer - status - intermediate table
+    public String jobOfferStatusTableName = "job_offer_status";
+    public String changedAtColumnName = "changed_at";
 
     // status table
     public String statusTableName = "status";
     public String colorColumnName = "color";
 
-    // job offer - document intermediary table
+    // job offer - document - intermediary table
     public String jobOfferDocumentTableName = "job_offer_document";
     public String documentIdColumnName = "document_id";
 
@@ -39,6 +42,7 @@ public class DatabaseShema {
     public String idColumnName = "id";
     public String nameColumnName = "name";
     public String jobOfferIdColumnName = "job_offer_id";
+    public String statusIdColumnName = "status_id";
     public String updatedAtColumnName = "updated_at";
     public String createdAtColumnName = "created_at";
 
