@@ -2,6 +2,8 @@ package personal.zaytiri.jobtracker.persistence;
 
 
 import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.builders.CreateTableQueryBuilder;
+import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.builders.InsertQueryBuilder;
+import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.builders.SelectQueryBuilder;
 import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.schema.Database;
 import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.schema.Schema;
 import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.schema.Table;
@@ -19,19 +21,27 @@ public class DbConnection {
     private static DbConnection INSTANCE;
     private final Database schema;
     private String path;
+    private String parentPath;
     private Connection connection;
+    private int databaseVersion = 1;
 
     private DbConnection(String fileName) {
         connection = null;
         schema = Schema.getSchema(fileName);
         path = "";
+        parentPath = getDbConnectionPath();
         if (schema == null) {
             System.err.println("Schema not correctly configured.");
             return;
         }
 
-        path = getDbConnectionPath() + schema.getName() + ".db";
+        path = parentPath + schema.getName() + ".db";
+
         createDatabase();
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public void close() {
@@ -54,6 +64,28 @@ public class DbConnection {
         }
 
         close();
+
+        if(getDatabaseVersionFromDb() != -1){
+            return;
+        }
+
+        InsertQueryBuilder insertQuery = new InsertQueryBuilder(open());
+        Table version = schema.getTable("version");
+        insertQuery.insertInto(version).values(1, databaseVersion).execute();
+    }
+
+    public int getDatabaseVersion(){
+        return databaseVersion;
+    }
+
+    public int getDatabaseVersionFromDb(){
+        SelectQueryBuilder query = new SelectQueryBuilder(open());
+        Table version = schema.getTable("version");
+        var results = query.select().from(version).execute().getResult();
+        if(results.isEmpty()){
+            return -1;
+        }
+        return Integer.parseInt(results.get(0).get("version"));
     }
 
     public boolean deleteData() {
@@ -94,6 +126,10 @@ public class DbConnection {
         return connection;
     }
 
+    public String getParentPath() {
+        return parentPath;
+    }
+
     public void resetInstance() {
         INSTANCE = null;
     }
@@ -106,6 +142,7 @@ public class DbConnection {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return path.toAbsolutePath() + "\\";
+        parentPath = path.toAbsolutePath() + "\\";
+        return parentPath;
     }
 }

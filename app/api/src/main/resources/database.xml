@@ -244,4 +244,18 @@
             <default>null</default>
         </column>
     </table>
+    <table> <!-- table version -->
+        <name>version</name>
+        <column>
+            <name>id</name>
+            <type>integer</type>
+            <default>1</default>
+            <isprimarykey>true</isprimarykey>
+        </column>
+        <column>
+            <name>version</name>
+            <type>integer</type>
+            <default>0</default>
+        </column>
+    </table>
 </database>
