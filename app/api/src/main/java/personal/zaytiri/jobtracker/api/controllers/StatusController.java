@@ -1,5 +1,6 @@
 package personal.zaytiri.jobtracker.api.controllers;
 
+import com.fasterxml.jackson.core.util.RecyclerPool;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -126,6 +127,29 @@ public class StatusController {
         deleteOperation.setRepository(new Repository<>());
 
         boolean isDeleted = deleteOperation.execute(new StatusMapperImpl().entityToModel(statusToRemove));
+
+        // also remove all rows that are associated with the removed status in joboffer-status table.
+        if(isDeleted){
+            Map<String, Pair<String, Object>> filters = new HashMap<>();
+            filters.put(DatabaseShema.getINSTANCE().statusIdColumnName, new Pair<>(Operators.EQUALS.value, id));
+
+            GetOperation<JobOfferStatusModel> getOperation = new GetOperation<>();
+            getOperation.setRepository(new Repository<>());
+
+            GetOperationRequest<JobOfferStatusModel> getRequest = new GetOperationRequest<>();
+            getRequest.setModel(new JobOfferStatusModel());
+            getRequest.setFilters(filters);
+
+            List<JobOfferStatus> results = new JobOfferStatusMapperImpl().toEntity(getOperation.execute(getRequest), false);
+
+            DeleteOperation<JobOfferStatusModel> deleteJOSOperation = new DeleteOperation<>();
+            deleteJOSOperation.setRepository(new Repository<>());
+            for (JobOfferStatus res : results){
+                JobOfferStatus toRemove = new JobOfferStatus();
+                toRemove.setId(res.getId());
+                deleteJOSOperation.execute(new JobOfferStatusMapperImpl().entityToModel(toRemove));
+            }
+        }
 
         JSONObject obj = new JSONObject();
         obj.put("success", isDeleted);
