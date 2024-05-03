@@ -149,8 +149,6 @@ public class JobOfferController {
         CompletableFuture<List<JobOffer>> byRole = CompletableFuture.supplyAsync(() -> findBy(text, DatabaseShema.getINSTANCE().roleColumnName));
         CompletableFuture<List<JobOffer>> byLocation = CompletableFuture.supplyAsync(() -> findBy(text, DatabaseShema.getINSTANCE().locationColumnName));
 
-        CompletableFuture<List<String>>[] tasks = new CompletableFuture[] {byCompany, byRole, byLocation};
-
         CompletableFuture<List<JobOffer>> combinedFuture = CompletableFuture.allOf(byCompany, byRole, byLocation)
                 .thenApply(v -> {
                     List<JobOffer> allJobOffers = Stream.of(byCompany, byRole, byLocation)
@@ -158,7 +156,7 @@ public class JobOfferController {
                             .flatMap(List::stream)
                             .toList();
 
-                    return (List<JobOffer>) new ArrayList<JobOffer>(allJobOffers.stream()
+                    return new ArrayList<>(allJobOffers.stream()
                             .collect(Collectors.toMap(
                                     JobOffer::getId, // Property to distinct by
                                     jobOffer -> jobOffer, // Identity function
@@ -209,6 +207,29 @@ public class JobOfferController {
 
         boolean isDeleted = deleteOperation.execute(new JobOfferMapperImpl().entityToModel(jobOfferToRemove));
 
+        // also remove all rows that are associated with the removed status in joboffer-status table.
+        if(isDeleted){
+            Map<String, Pair<String, Object>> filters = new HashMap<>();
+            filters.put(DatabaseShema.getINSTANCE().jobOfferIdColumnName, new Pair<>(Operators.EQUALS.value, id));
+
+            GetOperation<JobOfferStatusModel> getOperation = new GetOperation<>();
+            getOperation.setRepository(new Repository<>());
+
+            GetOperationRequest<JobOfferStatusModel> getRequest = new GetOperationRequest<>();
+            getRequest.setModel(new JobOfferStatusModel());
+            getRequest.setFilters(filters);
+
+            List<JobOfferStatus> results = new JobOfferStatusMapperImpl().toEntity(getOperation.execute(getRequest), false);
+
+            DeleteOperation<JobOfferStatusModel> deleteJOSOperation = new DeleteOperation<>();
+            deleteJOSOperation.setRepository(new Repository<>());
+            for (JobOfferStatus res : results){
+                JobOfferStatus toRemove = new JobOfferStatus();
+                toRemove.setId(res.getId());
+                deleteJOSOperation.execute(new JobOfferStatusMapperImpl().entityToModel(toRemove));
+            }
+        }
+
         JSONObject obj = new JSONObject();
         obj.put("success", isDeleted);
 
@@ -225,7 +246,7 @@ public class JobOfferController {
     public Response scrapeJobOffer(String url){
         JSONObject obj = new JSONObject();
 
-        JobOffer scrapedJobOffer = null;
+        JobOffer scrapedJobOffer;
 
         WebScraper scraper = WebScraperFactory.findSuitableScraper(url);
         if(scraper == null){
@@ -262,8 +283,6 @@ public class JobOfferController {
     @Path("/statistics")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getStatistics(){
-        var mapped = retrieveJobOffersByStatus();
-
         Statistics stats = new Statistics();
         stats.addStatistic(new TotalAppliedJobsByMonth());
         stats.addStatistic(new TotalAppliedJobsByDay());
