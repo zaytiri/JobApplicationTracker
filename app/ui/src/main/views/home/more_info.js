@@ -24,6 +24,7 @@ import {
   ViewIcon,
 } from '@chakra-ui/icons'
 
+import copy from 'clipboard-copy';
 
 import Card from "../../template/components/Card/Card.js";
 import CardBody from "../../template/components/Card/CardBody.js";
@@ -83,8 +84,8 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   }
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(currentJobOffer.link)
-      .catch((error) => {
+    copy(currentJobOffer.link)
+    .catch((error) => {
         console.error('Error copying text to clipboard:', error);
       });
   }
