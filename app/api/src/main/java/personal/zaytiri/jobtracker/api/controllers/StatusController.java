@@ -123,7 +123,6 @@ public class StatusController {
 
         boolean isDeleted = deleteOperation.execute(new StatusMapperImpl().entityToModel(statusToRemove));
 
-
         JSONObject obj = new JSONObject();
         obj.put("success", isDeleted);
 
@@ -148,6 +147,27 @@ public class StatusController {
         return Response
                 .ok()
                 .entity(jsonToReturn)
+                .build();
+    }
+
+    @DELETE
+    @Path("/remove-from-job-offer/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeStatusFromJobOffer(@PathParam("id") int statusId) {
+        JobOfferStatus statusToRemove = new JobOfferStatus();
+        statusToRemove.setId(statusId);
+
+        DeleteOperation<JobOfferStatusModel> deleteOperation = new DeleteOperation<>();
+        deleteOperation.setRepository(new Repository<>());
+
+        boolean isDeleted = deleteOperation.execute(new JobOfferStatusMapperImpl().entityToModel(statusToRemove));
+
+        JSONObject jsonToReturn = new JSONObject();
+        jsonToReturn.put("success", isDeleted);
+
+        return Response
+                .ok()
+                .entity(jsonToReturn.toString())
                 .build();
     }
 }
