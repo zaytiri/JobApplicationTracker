@@ -48,3 +48,9 @@ export const getStatusByJobOfferId = async function(id) {
     return response.data;
   });
 };
+
+export const removeStatusFromJobOffer = async function(id) {
+  return await axios.delete(baseUrl + "remove-from-job-offer/" + id, headers).then((response) => {
+    return response.data;
+  });
+};

@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Network } from 'vis-network';
 import 'vis-network/styles/vis-network.css';
 
-import { getStatusByJobOfferId, get } from '../../api/api_endpoints/status_api';
 import { Menu, Item, useContextMenu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 
+import { getStatusByJobOfferId, get, removeStatusFromJobOffer } from '../../api/api_endpoints/status_api';
 
 export const StatusGraph = ({ jobOfferId }) => {
     const [nodes, setNodes] = useState([])
@@ -30,6 +30,8 @@ export const StatusGraph = ({ jobOfferId }) => {
     }
 
     const removeNode = ({ props }) => {
+        removeStatusFromJobOffer(props.key)
+        setIsRemoved(true)
     }
 
     useEffect(() => {
