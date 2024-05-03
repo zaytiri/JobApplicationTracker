@@ -112,7 +112,7 @@ export const Statistics = () => {
                                 </StatLabel>
                                 <Flex>
                                     <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                                        {statistics['TotalJobs'] !== undefined && statistics['TotalJobs'][0].numberOfJobs}
+                                        {statistics['TotalJobs'] !== undefined ? statistics['TotalJobs'][0].numberOfJobs : 0}
                                     </StatNumber>
                                 </Flex>
                             </Stat>
@@ -151,7 +151,7 @@ export const Statistics = () => {
                                 </StatLabel>
                                 <Flex>
                                     <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                                        {statistics['TotalAppliedJobs'] !== undefined && statistics['TotalAppliedJobs'][0].numberOfAppliedJobs}
+                                        {statistics['TotalAppliedJobs'] !== undefined ? statistics['TotalAppliedJobs'][0].numberOfAppliedJobs : 0}
                                     </StatNumber>
                                 </Flex>
                             </Stat>
@@ -190,7 +190,7 @@ export const Statistics = () => {
                                 </StatLabel>
                                 <Flex>
                                     <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                                        {statistics['TotalAppliedJobsByMonth'] !== undefined && statistics['TotalAppliedJobsByMonth'][new Date().getMonth()].numberOfJobs}
+                                        {statistics['TotalAppliedJobsByMonth'] !== undefined ? statistics['TotalAppliedJobsByMonth'][new Date().getMonth()].numberOfJobs : 0}
                                     </StatNumber>
                                 </Flex>
                             </Stat>
@@ -262,6 +262,11 @@ export const Statistics = () => {
                     </Box>
                 </Card>
                 }
+                {(statistics['TotalAppliedJobsByDay'] === undefined || statistics['TotalJobsByStatus'] === undefined) && <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
+                <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
+                      No Job Applications added yet.
+                    </Text>
+                </Card>}
             </Grid>
         </Flex>
     );
