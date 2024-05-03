@@ -12,11 +12,15 @@ import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferStatusMapperImpl;
 import personal.zaytiri.jobtracker.api.mappers.StatusMapperImpl;
+import personal.zaytiri.jobtracker.persistence.DatabaseShema;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferStatusModel;
 import personal.zaytiri.jobtracker.persistence.models.StatusModel;
 import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
+import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Operators;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +172,39 @@ public class StatusController {
         return Response
                 .ok()
                 .entity(jsonToReturn.toString())
+                .build();
+    }
+
+    @PATCH
+    @Path("/update-from-job-offer/{id}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateStatusFromJobOffer(@PathParam("id") int id, String statusChangedAt) {
+        Map<String, Pair<String, Object>> filters = new HashMap<>();
+        filters.put(DatabaseShema.getINSTANCE().idColumnName, new Pair<>(Operators.EQUALS.value, id));
+
+        GetOperation<JobOfferStatusModel> getOperation = new GetOperation<>();
+        getOperation.setRepository(new Repository<>());
+
+        GetOperationRequest<JobOfferStatusModel> getRequest = new GetOperationRequest<>();
+        getRequest.setModel(new JobOfferStatusModel());
+        getRequest.setFilters(filters);
+
+        JobOfferStatus result = new JobOfferStatusMapperImpl().toEntity(getOperation.execute(getRequest), false).get(0);
+        System.out.println(new JSONObject(statusChangedAt).getString("date"));
+        result.setChangedAt(LocalDateTime.parse(new JSONObject(statusChangedAt).getString("date")));
+
+        UpdateOperation<JobOfferStatusModel> updateOperation = new UpdateOperation<>();
+        updateOperation.setRepository(new Repository<>());
+
+        boolean isUpdated = updateOperation.execute(new JobOfferStatusMapperImpl().entityToModel(result));
+
+        JSONObject obj = new JSONObject();
+        obj.append("success", isUpdated);
+
+        return Response
+                .ok()
+                .entity(obj.toString())
                 .build();
     }
 }
