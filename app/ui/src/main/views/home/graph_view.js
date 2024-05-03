@@ -2,36 +2,67 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Network } from 'vis-network';
 import 'vis-network/styles/vis-network.css';
 
+import {
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Button,
+    Input
+} from '@chakra-ui/react'
+
 import { Menu, Item, useContextMenu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 
-import { getStatusByJobOfferId, get, removeStatusFromJobOffer } from '../../api/api_endpoints/status_api';
+import { getStatusByJobOfferId, get, removeStatusFromJobOffer, editStatusFromJobOffer } from '../../api/api_endpoints/status_api';
 
 export const StatusGraph = ({ jobOfferId }) => {
     const [nodes, setNodes] = useState([])
     const [edges, setEdges] = useState([])
-    const [isRemoved, setIsRemoved] = useState(false)
+    const [edgeIdToEdit, setEdgeIdToEdit] = useState(0)
+    const [changedEdgeLabel, setChangedEdgeLabel] = useState('')
+
+    const [isNetworkChanged, setIsNetworkChanged] = useState(false)
     const containerRef = useRef(null);
     let network = null;
-    
-    const MENU_ID = 'NODE_MENU';
 
-    const { show } = useContextMenu({
-        id: MENU_ID,
-    });
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
-    function handleContextMenu(event, id) {
+    const NODE_MENU_ID = 'NODE_MENU';
+    const EDGE_MENU_ID = 'EDGE_MENU';
+
+    const { show } = useContextMenu();
+
+    const handleContextMenu = (event, menuId, props) => {
         show({
-            event,
-            props: {
-                key: id
-            }
-        })
+            id: menuId,
+            event: event,
+            props: props,
+          })
     }
 
     const removeNode = ({ props }) => {
         removeStatusFromJobOffer(props.key)
-        setIsRemoved(true)
+        setIsNetworkChanged(true)
+    }
+
+    const openModalToEditEdge = ({ props }) => {
+        setEdgeIdToEdit(props.key)
+        setChangedEdgeLabel(props.label)
+        onOpen()
+    }
+
+    const editEdge = async () => {
+        const response = await editStatusFromJobOffer(edgeIdToEdit, {date: new Date(changedEdgeLabel).toISOString().split('.')[0]})
+
+        if (response.success === false) return null;
+
+        setIsNetworkChanged(true)
+        onClose()
     }
 
     useEffect(() => {
@@ -48,8 +79,8 @@ export const StatusGraph = ({ jobOfferId }) => {
         };
 
         fetchData();
-        setIsRemoved(false)
-    }, [isRemoved]);
+        setIsNetworkChanged(false)
+    }, [isNetworkChanged]);
 
     const convertResponseToProperNodeNetwork = (data, statusNamesData) => {
         let nodes = []
@@ -73,7 +104,7 @@ export const StatusGraph = ({ jobOfferId }) => {
             }]
 
             if (nextElement) {
-                const date = new Date(nextElement.changedAt[0], nextElement.changedAt[1] - 1, nextElement.changedAt[2], nextElement.changedAt[3], nextElement.changedAt[4], 0).toISOString().substring(0, 10)
+                const date = nextElement.changedAt[0] + "-" + nextElement.changedAt[1].toString().padStart(2, '0') + "-" + nextElement.changedAt[2].toString().padStart(2, '0');
                 edges = [...edges, { from: currentStatus.id, to: nextElement.id, arrows: 'to', label: date }]
             }
         }
@@ -99,15 +130,41 @@ export const StatusGraph = ({ jobOfferId }) => {
         network.on("oncontext", function (params) {
             if (params.nodes.length > 0) {
                 const nodeId = params.nodes[0];
-                handleContextMenu(params.event, nodeId)
+                handleContextMenu(params.event, NODE_MENU_ID, {key: nodeId})
+            } else {
+                const edgeId = params.edges[0];
+                const edge = edges.find((edge) => { return edge.id === edgeId })
+                handleContextMenu(params.event, EDGE_MENU_ID, {key: edge.to, label: edge.label})
             }
         });
     }
 
     return (
         <div>
-            <Menu id={MENU_ID}>
+            <>
+                <Modal isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Edit Edge</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <Input type="date" onChange={(event) => setChangedEdgeLabel(event.target.value)} value={changedEdgeLabel} />
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button colorScheme='blue' mr={3} onClick={editEdge}>
+                                Edit
+                            </Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            </>
+
+            <Menu id={NODE_MENU_ID}>
                 <Item onClick={removeNode}>Remove</Item>
+            </Menu>
+            <Menu id={EDGE_MENU_ID}>
+                <Item onClick={openModalToEditEdge}>Edit</Item>
             </Menu>
             <div ref={containerRef} key={jobOfferId} style={{ width: '450px', height: '400px' }} />
         </div>

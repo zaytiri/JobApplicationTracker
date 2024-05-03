@@ -54,3 +54,9 @@ export const removeStatusFromJobOffer = async function(id) {
     return response.data;
   });
 };
+
+export const editStatusFromJobOffer = async function(id, status) {
+  return await axios.patch(baseUrl + "update-from-job-offer/" + id, status, headers).then((response) => {
+    return response.data;
+  });
+};
