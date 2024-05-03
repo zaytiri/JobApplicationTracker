@@ -10,7 +10,20 @@ import {
   Collapse,
   Box,
   Link,
+  Tooltip,
+  Center,
 } from "@chakra-ui/react";
+
+import {
+  RepeatIcon,
+  DeleteIcon,
+  CopyIcon,
+  ExternalLinkIcon,
+  QuestionOutlineIcon,
+  ViewOffIcon,
+  ViewIcon,
+} from '@chakra-ui/icons'
+
 
 import Card from "../../template/components/Card/Card.js";
 import CardBody from "../../template/components/Card/CardBody.js";
@@ -40,7 +53,7 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   }
   const [show, setShow] = useState(false)
   const handleToggleToShowDescription = () => setShow(!show)
-  
+
   const [showGraph, setShowGraph] = useState(false)
   const handleToggleToShowGraph = () => setShowGraph(!showGraph)
 
@@ -69,6 +82,13 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(currentJobOffer.link)
+      .catch((error) => {
+        console.error('Error copying text to clipboard:', error);
+      });
+  }
+
   return (
     <Card p='15px' maxW={{ sm: "320px", md: "100%" }} h="100%" w='100%'>
       <CardHeader mb={{ base: "0px", lg: "20px" }} align='center'>
@@ -80,15 +100,28 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           boxShadow='0px 7px 18px 3px rgba(0, 0, 0, 0.2)'
         >
           <Flex p='10px' alignItems='center'>
-            <Button variant="primary" >
-              Get updates
-            </Button>
+            <Tooltip label='Click here to check updates from the current job application.'>
+              <RepeatIcon boxSize={5} color="black.500" />
+            </Tooltip>
             <Spacer />
             <EditJobOffer
               currentJobOffer={currentJobOffer}
               setFetchDataAgain={setFetchDataAgain}
-              closeModal={onToggle}
-            />
+              closeModal={onToggle} />
+            <Spacer />
+            <Tooltip label="Click here to copy the job application URL to the clipboard.">
+              <CopyIcon boxSize={5} color="black.500" onClick={copyToClipboard} />
+            </Tooltip>
+            <Spacer />
+            <Tooltip label="Click here to open the job application URL.">
+              <ExternalLinkIcon boxSize={5} color="black.500">
+                <Link href={currentJobOffer.link} isExternal/>
+              </ExternalLinkIcon>
+            </Tooltip>
+            <Spacer />
+            <Tooltip label="Click here to remove this job application.">
+              <DeleteIcon boxSize={5} color="red.500" onClick={() => removeJobOffer(currentJobOffer.id)} />
+            </Tooltip>
           </Flex>
         </Box>
 
@@ -119,17 +152,18 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
 
       <CardBody px='5px' height="100%">
 
-        <Button size='sm' onClick={handleToggleToShowGraph} mt='1rem'>
-          {showGraph ? 'Hide' : 'Show'} Activities
-        </Button>
+        <Center p="10px">
+          <Tooltip label='Show/Hide job application activities.'>
+            {showGraph ? <ViewOffIcon boxSize={8} onClick={handleToggleToShowGraph} /> : <ViewIcon boxSize={8} onClick={handleToggleToShowGraph} />}
+          </Tooltip>
+          <Tooltip label='This section aims to show all activities from a job application. To remove a status or edit a label, said component needs to be selected first and if right-clicked, a context menu will appear with more options.'>
+            <QuestionOutlineIcon />
+          </Tooltip>
+        </Center >
+
         {showGraph && isOpen && <StatusGraph jobOfferId={currentJobOffer.id} />}
 
         <Flex direction='column' height="100%">
-          <Button variant="primary" mt='15px' mb='15px'>
-            <Link href={currentJobOffer.link} isExternal>
-              Go to Job Offer
-            </Link>
-          </Button>
           <Flex mb='10px' direction="column">
             <Text
               fontSize='md'
@@ -181,14 +215,6 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
               Show {show ? 'Less' : 'More'}
             </Button>
           </Text>
-
-
-
-          <Flex justifyContent='right'>
-            <Button variant="danger" onChange={() => removeJobOffer(currentJobOffer.id)}>
-              DELETE
-            </Button>
-          </Flex>
         </Flex>
       </CardBody>
     </Card>

@@ -19,8 +19,12 @@ import {
     Switch,
     Divider,
     Flex,
-
+    Tooltip,
 } from "@chakra-ui/react";
+
+import {
+    EditIcon
+} from "@chakra-ui/icons"
 
 import { update } from "../api/api_endpoints/job_offer_api.js"
 import { get } from "../api/api_endpoints/status_api.js"
@@ -104,42 +108,41 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
 
     const setStatusApplied = () => {
         setApplied(!applied)
-        
-        if(applied){
+
+        if (applied) {
             setAppliedAt(getFormattedDate(''))
-        }else{
+        } else {
             setAppliedAt(getFormattedDate(new Date(Date.now())))
         }
     }
-    
+
     const getFormattedDate = (dateToFormat) => {
-        if(dateToFormat?.length < 0 || dateToFormat === '' || dateToFormat === undefined || applied === 'Invalid Date Time'){
+        if (dateToFormat?.length < 0 || dateToFormat === '' || dateToFormat === undefined || applied === 'Invalid Date Time') {
             return '';
         }
-        
+
         let date = dateToFormat
-        if(dateToFormat?.length > 0){
+        if (dateToFormat?.length > 0) {
             date = new Date(dateToFormat[0], dateToFormat[1] - 1, dateToFormat[2], dateToFormat[3], dateToFormat[4], 0);
             date = new Date(date).toLocaleString()
             date = new Date(new Date(date).toLocaleString() + ' UTC')
         }
-        
+
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
-        
+
         const formattedDate = `${year}-${month}-${day}T${hour}:${minute}`;
         return formattedDate
     }
 
     return (
         <>
-            <Button variant="primary" onClick={onOpen}>
-                EDIT
-            </Button>
-
+            <Tooltip label="Click here to edit job applications details.">
+                <EditIcon boxSize={5} color="black.500" onClick={onOpen} />
+            </Tooltip>
             <Modal
                 initialFocusRef={initialRef}
                 finalFocusRef={finalRef}
@@ -198,7 +201,7 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
                                 <FormLabel mb='0'>
                                     Applied?
                                 </FormLabel>
-                                <Switch onChange={() => setStatusApplied()} isChecked={applied}/>
+                                <Switch onChange={() => setStatusApplied()} isChecked={applied} />
                             </FormControl>
                             <FormControl display='flex' alignItems='center' mt="5px">
                                 <FormLabel mb='0'>
