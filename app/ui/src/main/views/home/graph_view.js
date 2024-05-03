@@ -20,7 +20,7 @@ import 'react-contexify/ReactContexify.css';
 
 import { getStatusByJobOfferId, get, removeStatusFromJobOffer, editStatusFromJobOffer } from '../../api/api_endpoints/status_api';
 
-export const StatusGraph = ({ jobOfferId }) => {
+export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
     const [nodes, setNodes] = useState([])
     const [edges, setEdges] = useState([])
     const [edgeIdToEdit, setEdgeIdToEdit] = useState(0)
@@ -48,6 +48,8 @@ export const StatusGraph = ({ jobOfferId }) => {
     const removeNode = ({ props }) => {
         removeStatusFromJobOffer(props.key)
         setIsNetworkChanged(true)
+        setFetchDataAgain(true)
+        closeModal()
     }
 
     const openModalToEditEdge = ({ props }) => {

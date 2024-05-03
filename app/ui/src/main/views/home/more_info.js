@@ -162,7 +162,11 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           </Tooltip>
         </Center >
 
-        {showGraph && isOpen && <StatusGraph jobOfferId={currentJobOffer.id} />}
+        {showGraph && isOpen && 
+        <StatusGraph 
+          jobOfferId={currentJobOffer.id} 
+          setFetchDataAgain={setFetchDataAgain} 
+          closeModal={onToggle}/>}
 
         <Flex direction='column' height="100%">
           <Flex mb='10px' direction="column">
