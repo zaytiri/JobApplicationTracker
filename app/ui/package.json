@@ -37,6 +37,7 @@
     "react-big-calendar": "1.11.2",
     "react-bootstrap": "^2.10.2",
     "react-bootstrap-sweetalert": "5.2.0",
+    "react-contexify": "^6.0.0",
     "react-custom-scrollbars-2": "^4.5.0",
     "react-datetime": "3.2.0",
     "react-dom": "^18.2.0",
