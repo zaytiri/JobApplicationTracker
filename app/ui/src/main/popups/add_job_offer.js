@@ -77,7 +77,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
             location: location,
             link: link,
             description: description,
-            appliedAt: !applied ? null : new Date(applied),
+            appliedAt: !applied ? null : new Date(),
             statusId: statusId.toString(),
         }
         const response = await create(obj);
