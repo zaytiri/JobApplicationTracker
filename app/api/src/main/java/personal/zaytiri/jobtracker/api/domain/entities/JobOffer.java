@@ -1,8 +1,22 @@
 package personal.zaytiri.jobtracker.api.domain.entities;
 
+import personal.zaytiri.jobtracker.api.database.operations.GetOperation;
+import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
 import personal.zaytiri.jobtracker.api.domain.entities.base.Entity;
+import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
+import personal.zaytiri.jobtracker.api.mappers.JobOfferStatusMapperImpl;
+import personal.zaytiri.jobtracker.persistence.DatabaseShema;
+import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
+import personal.zaytiri.jobtracker.persistence.models.JobOfferStatusModel;
+import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
+import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
+import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Operators;
+import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Order;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JobOffer extends Entity<JobOffer> {
     private String company;
@@ -11,8 +25,8 @@ public class JobOffer extends Entity<JobOffer> {
     private String location;
     private String link;
     private String description;
-    private LocalDateTime appliedAt;
     private int statusId;
+    private LocalDateTime appliedAt;
     private String interviewNotes;
 
     public String getCompany() {
@@ -71,11 +85,42 @@ public class JobOffer extends Entity<JobOffer> {
         this.appliedAt = appliedAt;
     }
 
-    public int getStatusId() {
+    public int getStatusId(boolean fromDb) {
+        if(!fromDb){
+            return getStatusId();
+        }
+
+        Map<String, Pair<String, Object>> filters = new HashMap<>();
+        filters.put(DatabaseShema.getINSTANCE().jobOfferIdColumnName, new Pair<>(Operators.EQUALS.value, id));
+
+        GetOperation<JobOfferStatusModel> getOperation = new GetOperation<>();
+        getOperation.setRepository(new Repository<>());
+
+        GetOperationRequest<JobOfferStatusModel> getOperationRequest = new GetOperationRequest<>();
+        getOperationRequest.setModel(new JobOfferStatusModel());
+        getOperationRequest.setFilters(filters);
+        getOperationRequest.setOrderByColumn(new Pair<>(Order.DESCENDING.value, DatabaseShema.getINSTANCE().changedAtColumnName));
+
+        List<JobOfferStatus> results = new JobOfferStatusMapperImpl().toEntity(getOperation.execute(getOperationRequest), false);
+
+        int statusId = 0;
+        if(!results.isEmpty()){
+            statusId = results.get(0).getStatusId();
+        }
+
+        setStatusId(statusId);
         return statusId;
     }
 
-    public void setStatusId(int statusId) {
+    public int getStatusId() {
+        if(id != 0 && statusId == 0){
+            getStatusId(true);
+        }
+
+        return statusId;
+    }
+
+    public void setStatusId(int statusId){
         this.statusId = statusId;
     }
 

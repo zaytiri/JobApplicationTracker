@@ -49,11 +49,11 @@
             <type>numeric</type>
             <default>null</default>
         </column>
-        <column>
-            <name>status_id</name>
-            <type>text</type>
-            <default>null</default>
-        </column>
+<!--        <column>-->
+<!--            <name>status_id</name>-->
+<!--            <type>text</type>-->
+<!--            <default>null</default>-->
+<!--        </column>-->
         <column>
             <name>interview_notes</name>
             <type>text</type>

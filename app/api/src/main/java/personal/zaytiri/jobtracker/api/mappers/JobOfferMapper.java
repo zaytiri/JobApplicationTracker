@@ -28,7 +28,6 @@ public abstract class JobOfferMapper extends Mapper<JobOffer, JobOfferModel> {
             jobOffer.setDescription(getRowStringValue(row, mixedResult, schema.descriptionColumnName));
             jobOffer.setLocation(getRowStringValue(row, mixedResult, schema.locationColumnName));
             jobOffer.setAppliedAt(getRowDateValue(row, mixedResult, schema.appliedAtColumnName));
-            jobOffer.setStatusId(getRowIntValue(row, mixedResult, schema.statusIdColumnName));
             jobOffer.setInterviewNotes(getRowStringValue(row, mixedResult, schema.interviewNotesColumnName));
 
             jobOffers.add(jobOffer);

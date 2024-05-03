@@ -16,7 +16,6 @@ public class JobOfferModel extends Model {
     private String link;
     private String description;
     private String appliedAt;
-    private String statusId;
     private String interviewNotes;
 
     public String getCompany() {
@@ -75,14 +74,6 @@ public class JobOfferModel extends Model {
         this.appliedAt = appliedAt;
     }
 
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
-
     public String getInterviewNotes() {
         return interviewNotes;
     }
@@ -106,7 +97,6 @@ public class JobOfferModel extends Model {
         values.add(new Pair<>(schema.linkColumnName, link));
         values.add(new Pair<>(schema.descriptionColumnName, description));
         values.add(new Pair<>(schema.appliedAtColumnName, appliedAt));
-        values.add(new Pair<>(schema.statusIdColumnName, statusId));
         values.add(new Pair<>(schema.interviewNotesColumnName, interviewNotes));
         values.add(new Pair<>(schema.updatedAtColumnName, updatedAt));
         values.add(new Pair<>(schema.createdAtColumnName, createdAt));
