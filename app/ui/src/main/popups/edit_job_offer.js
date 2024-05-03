@@ -28,6 +28,7 @@ import {
 
 import { update } from "../api/api_endpoints/job_offer_api.js"
 import { get } from "../api/api_endpoints/status_api.js"
+import { toast } from "react-toastify";
 
 export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -69,6 +70,18 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
         setFetchDataAgain(true)
         onClose();
         closeModal();
+
+        toast.success('Job application was edited.', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Zoom,
+            });
     }
 
     useEffect(() => {

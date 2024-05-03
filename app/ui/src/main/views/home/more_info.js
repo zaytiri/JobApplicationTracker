@@ -26,6 +26,8 @@ import {
 
 import copy from 'clipboard-copy';
 
+import { toast, Zoom } from 'react-toastify';
+
 import Card from "../../template/components/Card/Card.js";
 import CardBody from "../../template/components/Card/CardBody.js";
 import CardHeader from "../../template/components/Card/CardHeader.js";
@@ -65,6 +67,18 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
 
     onToggle();
     setJobOffers(jobOffers.filter((jobOffer) => jobOffer.id !== id));
+
+    toast.success('Job application was removed.', {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Zoom,
+      });
   }
 
   const hexToRgb = (hex) => {
@@ -85,8 +99,31 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
 
   const copyToClipboard = () => {
     copy(currentJobOffer.link)
-    .catch((error) => {
-        console.error('Error copying text to clipboard:', error);
+      .then(() => {
+        toast.info('URL copied to Clipboard.', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Zoom,
+          });
+      })
+      .catch((error) => {
+        toast.error('Some error occurred when copying URL to Clipboard.', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Zoom,
+          });
       });
   }
 
@@ -114,10 +151,10 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
               <CopyIcon boxSize={5} color="black.500" onClick={copyToClipboard} />
             </Tooltip>
             <Spacer />
-            <Tooltip label="Click here to open the job application URL.">
-              <ExternalLinkIcon boxSize={5} color="black.500">
-                <Link href={currentJobOffer.link} isExternal/>
-              </ExternalLinkIcon>
+            <Tooltip label="Click here to open the job application URL. When opening any link, if it shows an homepage or similar instead of opening the job application URL, exit the sub-window and try again.">
+              <Link href={currentJobOffer.link} isExternal>
+                <ExternalLinkIcon boxSize={5} color="black.500" />
+              </Link>
             </Tooltip>
             <Spacer />
             <Tooltip label="Click here to remove this job application.">
@@ -162,11 +199,11 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           </Tooltip>
         </Center >
 
-        {showGraph && isOpen && 
-        <StatusGraph 
-          jobOfferId={currentJobOffer.id} 
-          setFetchDataAgain={setFetchDataAgain} 
-          closeModal={onToggle}/>}
+        {showGraph && isOpen &&
+          <StatusGraph
+            jobOfferId={currentJobOffer.id}
+            setFetchDataAgain={setFetchDataAgain}
+            closeModal={onToggle} />}
 
         <Flex direction='column' height="100%">
           <Flex mb='10px' direction="column">

@@ -25,6 +25,7 @@ import {
 
 import { create, scrape } from "../api/api_endpoints/job_offer_api.js"
 import { get } from "../api/api_endpoints/status_api.js"
+import { toast } from "react-toastify";
 
 export const AddJobOffer = ({ setFetchDataAgain }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -62,7 +63,17 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
             setDescription(response.description);
 
         } catch (error) {
-            console.log("Error scraping:", error);
+            toast.error('Something went wrong while scraping website. Try again later if failing more than two times.', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Zoom,
+                });
         }
 
         setLoadingScrape(false);
@@ -89,6 +100,18 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
         resetModal();
 
         onClose();
+
+        toast.success('New Job Application was created.', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Zoom,
+            });
     }
 
     useEffect(() => {

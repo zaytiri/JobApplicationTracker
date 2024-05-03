@@ -19,6 +19,7 @@ import { Menu, Item, useContextMenu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 
 import { getStatusByJobOfferId, get, removeStatusFromJobOffer, editStatusFromJobOffer } from '../../api/api_endpoints/status_api';
+import { toast } from 'react-toastify';
 
 export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
     const [nodes, setNodes] = useState([])
@@ -50,6 +51,18 @@ export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
         setIsNetworkChanged(true)
         setFetchDataAgain(true)
         closeModal()
+
+        toast.success('Status was removed from Job Application.', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Zoom,
+            });
     }
 
     const openModalToEditEdge = ({ props }) => {
@@ -64,6 +77,18 @@ export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
 
         setIsNetworkChanged(true)
         onClose()
+
+        toast.success('Label Date was edited.', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Zoom,
+            });
     }
 
     useEffect(() => {
