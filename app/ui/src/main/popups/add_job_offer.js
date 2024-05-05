@@ -26,7 +26,7 @@ import {
 import { create, scrape } from "../api/api_endpoints/job_offer_api.js"
 import { get as getStatus } from "../api/api_endpoints/status_api.js"
 import { get as getSettings } from "../api/api_endpoints/settings_api.js";
-import { toast } from "react-toastify";
+import { Zoom, toast } from "react-toastify";
 
 export const AddJobOffer = ({ setFetchDataAgain }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
