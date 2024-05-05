@@ -24,7 +24,8 @@ import {
 } from "@chakra-ui/react";
 
 import { create, scrape } from "../api/api_endpoints/job_offer_api.js"
-import { get } from "../api/api_endpoints/status_api.js"
+import { get as getStatus } from "../api/api_endpoints/status_api.js"
+import { get as getSettings } from "../api/api_endpoints/settings_api.js";
 import { toast } from "react-toastify";
 
 export const AddJobOffer = ({ setFetchDataAgain }) => {
@@ -117,10 +118,10 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await get({});
+                const response = await getStatus({});
                 setStatus(response);
             } catch (error) {
-                console.error("Error fetching job offers:", error);
+                console.error("Error fetching status:", error);
             }
         };
 
@@ -139,6 +140,14 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
         setApplied(false);
         setStatusId(0);
     }
+
+    const toggleApplied = async () => {
+        setApplied(!applied);
+
+        const response = await getSettings();
+        console.log(response)
+        setStatusId(!applied ? response.appliedStatus : 0)
+      };
 
     return (
         <>
@@ -193,7 +202,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Status</FormLabel>
-                                <Select onChange={(event) => setStatusId(event.target.value)} placeholder='Select option'>
+                                <Select onChange={(event) => setStatusId(event.target.value)} placeholder='Select option' value={statusId}>
                                     {status?.length > 0 && status.map((row) => {
                                         return (
                                             <option value={row.id}>{row.name}</option>
@@ -214,7 +223,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
                             <FormLabel htmlFor='applied' mb='0'>
                                 Applied?
                             </FormLabel>
-                            <Switch onChange={() => setApplied(!applied)} id='applied' />
+                            <Switch onChange={toggleApplied} id='applied' />
                         </FormControl>
                     </ModalBody>
 
