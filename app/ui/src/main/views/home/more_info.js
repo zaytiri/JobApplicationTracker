@@ -78,7 +78,7 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
       progress: undefined,
       theme: "colored",
       transition: Zoom,
-      });
+    });
   }
 
   const hexToRgb = (hex) => {
@@ -110,7 +110,7 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           progress: undefined,
           theme: "colored",
           transition: Zoom,
-          });
+        });
       })
       .catch((error) => {
         toast.error('Some error occurred when copying URL to Clipboard.', {
@@ -123,7 +123,7 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           progress: undefined,
           theme: "colored",
           transition: Zoom,
-          });
+        });
       });
   }
 
@@ -138,6 +138,7 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           boxShadow='0px 7px 18px 3px rgba(0, 0, 0, 0.2)'
         >
           <Flex p='10px' alignItems='center'>
+            <Spacer />
             <Tooltip label='Click here to check updates from the current job application.'>
               <RepeatIcon boxSize={5} color="black.500" />
             </Tooltip>
@@ -160,6 +161,7 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
             <Tooltip label="Click here to remove this job application.">
               <DeleteIcon boxSize={5} color="red.500" onClick={() => removeJobOffer(currentJobOffer.id)} />
             </Tooltip>
+            <Spacer />
           </Flex>
         </Box>
 
