@@ -5,11 +5,10 @@ import org.htmlunit.html.*;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 
 import java.io.IOException;
-import java.util.List;
 
 public class GlassDoorScraper extends WebScraper{
     @Override
-    public JobOffer process(String url) throws IOException {
+    public JobOffer getGeneralJobInformation(String url) throws IOException {
         JobOffer scrapedJobOffer = new JobOffer();
 
         final WebClient webClient = new WebClient();
@@ -32,5 +31,10 @@ public class GlassDoorScraper extends WebScraper{
         scrapedJobOffer.setDescription(getAllTextContent(description));
 
         return scrapedJobOffer;
+    }
+
+    @Override
+    public boolean isJobClosed(String url) throws IOException {
+        return false;
     }
 }

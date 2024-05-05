@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class LinkedInScraper extends WebScraper {
     @Override
-    public JobOffer process(String url) throws IOException {
+    public JobOffer getGeneralJobInformation(String url) throws IOException {
         JobOffer scrapedJobOffer = new JobOffer();
 
         final WebClient webClient = new WebClient();
@@ -32,5 +32,23 @@ public class LinkedInScraper extends WebScraper {
         scrapedJobOffer.setDescription(getAllTextContent(description));
 
         return scrapedJobOffer;
+    }
+
+    @Override
+    public boolean isJobClosed(String url) throws IOException {
+        final WebClient webClient = new WebClient();
+
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setCssEnabled(false);
+
+        final HtmlPage page = webClient.getPage(url);
+
+        final HtmlFigure status = (HtmlFigure) page.getByXPath("//figure[@class='closed-job__flavor--closed'");
+
+        if(!status.hasChildNodes()){
+            return false;
+        }
+
+        return true;
     }
 }

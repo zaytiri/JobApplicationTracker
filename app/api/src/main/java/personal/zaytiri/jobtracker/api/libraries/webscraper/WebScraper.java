@@ -1,6 +1,5 @@
 package personal.zaytiri.jobtracker.api.libraries.webscraper;
 
-import org.htmlunit.*;
 import org.htmlunit.html.*;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 
@@ -8,7 +7,8 @@ import java.io.IOException;
 
 public abstract class WebScraper {
 
-    public abstract JobOffer process(String url) throws IOException;
+    public abstract JobOffer getGeneralJobInformation(String url) throws IOException;
+    public abstract boolean isJobClosed(String url) throws IOException;
 
     protected String getAllTextContent(HtmlElement element) {
         StringBuilder textContent = new StringBuilder();
