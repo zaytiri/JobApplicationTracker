@@ -32,7 +32,7 @@ import Card from "../../template/components/Card/Card.js";
 import CardBody from "../../template/components/Card/CardBody.js";
 import CardHeader from "../../template/components/Card/CardHeader.js";
 
-import { remove } from "../../api/api_endpoints/job_offer_api.js"
+import { checkJobUpdate, remove } from "../../api/api_endpoints/job_offer_api.js"
 import { StatusGraph } from "./graph_view.js";
 import { EditJobOffer } from "../../popups/edit_job_offer.js";
 
@@ -127,6 +127,14 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
       });
   }
 
+  const checkJobUpdates = async () => {
+    const response = await checkJobUpdate(currentJobOffer.id);
+    if(response.success === false) return null;
+
+    onToggle();
+    setFetchDataAgain(true)
+  }
+
   return (
     <Card p='15px' maxW={{ sm: "320px", md: "100%" }} h="100%" w='100%'>
       <CardHeader mb={{ base: "0px", lg: "20px" }} align='center'>
@@ -140,7 +148,7 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           <Flex p='10px' alignItems='center'>
             <Spacer />
             <Tooltip label='Click here to check updates from the current job application.'>
-              <RepeatIcon boxSize={5} color="black.500" />
+              <RepeatIcon boxSize={5} color="black.500" onClick={checkJobUpdates}/>
             </Tooltip>
             <Spacer />
             <EditJobOffer

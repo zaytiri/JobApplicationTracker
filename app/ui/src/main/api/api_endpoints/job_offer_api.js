@@ -46,6 +46,14 @@ export const remove = async function(id) {
 export const scrape = async function(url) {
   return await axios.post(baseUrl + "scrape", url, headers).then((response) => {
     return response.data;
+  }).catch((error) =>{
+    return error
+  });
+};
+
+export const checkJobUpdate = async function(id) {
+  return await axios.patch(baseUrl + "update-job-status", id, headers).then((response) => {
+    return response.data;
   });
 };
 
