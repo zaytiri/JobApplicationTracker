@@ -1,10 +1,12 @@
 package personal.zaytiri.jobtracker.api.libraries.webscraper;
 
+import org.eclipse.jetty.websocket.common.util.ReflectUtils;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.*;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LinkedInScraper extends WebScraper {
     @Override
@@ -35,7 +37,7 @@ public class LinkedInScraper extends WebScraper {
     }
 
     @Override
-    public boolean isJobClosed(String url) throws IOException {
+    public boolean isJobClosed(String url) throws IOException, RuntimeException {
         final WebClient webClient = new WebClient();
 
         webClient.getOptions().setJavaScriptEnabled(false);
@@ -43,12 +45,14 @@ public class LinkedInScraper extends WebScraper {
 
         final HtmlPage page = webClient.getPage(url);
 
-        final HtmlFigure status = (HtmlFigure) page.getByXPath("//figure[@class='closed-job__flavor--closed'");
+        final List<HtmlFigureCaption> figcaptions = page.getByXPath("//figcaption");
 
-        if(!status.hasChildNodes()){
-            return false;
+        for(HtmlFigureCaption fc : figcaptions){
+            if(fc.getAttribute("class").equals("closed-job__flavor--closed")){
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
 }

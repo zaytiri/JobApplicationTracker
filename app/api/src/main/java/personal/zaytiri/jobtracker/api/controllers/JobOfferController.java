@@ -11,16 +11,19 @@ import personal.zaytiri.jobtracker.api.database.requests.FindByTextOperationRequ
 import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOfferStatus;
+import personal.zaytiri.jobtracker.api.domain.entities.Settings;
 import personal.zaytiri.jobtracker.api.domain.entities.Status;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraper;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraperFactory;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferMapperImpl;
 import personal.zaytiri.jobtracker.api.mappers.JobOfferStatusMapperImpl;
+import personal.zaytiri.jobtracker.api.mappers.SettingsMapperImpl;
 import personal.zaytiri.jobtracker.api.statistics.*;
 import personal.zaytiri.jobtracker.persistence.DatabaseShema;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferModel;
 import personal.zaytiri.jobtracker.persistence.models.JobOfferStatusModel;
+import personal.zaytiri.jobtracker.persistence.models.SettingsModel;
 import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
 import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Operators;
@@ -256,7 +259,7 @@ public class JobOfferController {
         }
 
         try {
-            scrapedJobOffer = scraper.process(url);
+            scrapedJobOffer = scraper.getGeneralJobInformation(url);
         } catch (IOException e) {
             obj.put("success", false);
             obj.put("message", e);
@@ -264,6 +267,84 @@ public class JobOfferController {
         }
 
         return Response.ok().entity(new Jackson().fromObjectToJson(scrapedJobOffer)).build();
+    }
+
+    @PATCH
+    @Path("/update-job-status")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateJobStatus(int id){
+        Map<String, Pair<String, Object>> filters = new HashMap<>();
+        filters.put(DatabaseShema.getINSTANCE().idColumnName, new Pair<>(Operators.EQUALS.value, id));
+
+        GetOperation<JobOfferModel> getOperation = new GetOperation<>();
+        getOperation.setRepository(new Repository<>());
+
+        GetOperationRequest<JobOfferModel> getOperationRequest = new GetOperationRequest<>();
+        getOperationRequest.setModel(new JobOfferModel());
+        getOperationRequest.setFilters(filters);
+        getOperationRequest.setOrderByColumn(null);
+
+        List<Map<String, String>> results = getOperation.execute(getOperationRequest);
+        var currentJobOffer = new JobOfferMapperImpl().toEntity(results, false).get(0);
+
+        JSONObject obj = new JSONObject();
+
+        WebScraper scraper = WebScraperFactory.findSuitableScraper(currentJobOffer.getLink());
+        if(scraper == null){
+            JSONObject noSuitableResponse = new JSONObject();
+            noSuitableResponse.put("message", "no suitable scraper found.");
+            return Response.ok().entity(noSuitableResponse.toString()).build();
+        }
+
+        boolean isJobClosed;
+        try {
+            isJobClosed = scraper.isJobClosed(currentJobOffer.getLink());
+        } catch (IOException | RuntimeException e) {
+            obj.put("success", false);
+            obj.put("message", e);
+            return Response.ok().entity(obj.toString()).build();
+        }
+
+        if(!isJobClosed){
+            obj.put("success", false);
+            return Response
+                    .ok()
+                    .entity(obj.toString())
+                    .build();
+        }
+
+        GetOperation<SettingsModel> getSettingsOperation = new GetOperation<>();
+        getSettingsOperation.setRepository(new Repository<>());
+
+        GetOperationRequest<SettingsModel> getSettingsOperationRequest = new GetOperationRequest<>();
+        getSettingsOperationRequest.setModel(new SettingsModel());
+        getSettingsOperationRequest.setFilters(new HashMap<>());
+        getSettingsOperationRequest.setOrderByColumn(null);
+
+        List<Map<String, String>> settingsResults = getSettingsOperation.execute(getSettingsOperationRequest);
+
+        var jobClosedStatus = new SettingsMapperImpl().toEntity(settingsResults, false).get(0).getClosedStatus(); // get users mapping for when a job is closed.
+
+        boolean isUpdated = false;
+        if (currentJobOffer.getStatusId() != jobClosedStatus && jobClosedStatus != 0) {
+            CreateOperation<JobOfferStatusModel> createJobOfferStatusOperation = new CreateOperation<>();
+            createJobOfferStatusOperation.setRepository(new Repository<>());
+
+            JobOfferStatus newJobOfferStatus = new JobOfferStatus();
+            newJobOfferStatus.setJobOfferId(id);
+            newJobOfferStatus.setStatusId(jobClosedStatus);
+            newJobOfferStatus.setChangedAt(LocalDateTime.now());
+
+            isUpdated = createJobOfferStatusOperation.execute(new JobOfferStatusMapperImpl().entityToModel(newJobOfferStatus)).isCreated();
+        }
+
+        obj.put("success", isUpdated);
+
+        return Response
+                .ok()
+                .entity(obj.toString())
+                .build();
     }
 
     @GET
