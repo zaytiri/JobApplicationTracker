@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class DbConnection {
     private static DbConnection INSTANCE;
@@ -55,6 +56,10 @@ public class DbConnection {
     }
 
     public void createDatabase() {
+        if(getDatabaseVersionFromDb() != -1){
+            return;
+        }
+
         CreateTableQueryBuilder query = new CreateTableQueryBuilder(open());
         query.setCloseConnection(false);
 
@@ -65,22 +70,29 @@ public class DbConnection {
 
         close();
 
-        if(getDatabaseVersionFromDb() != -1){
-            return;
-        }
+        populateDefaultSettingsToDb();
 
-        InsertQueryBuilder insertQuery = new InsertQueryBuilder(open());
-        Table version = schema.getTable("version");
-        insertQuery.insertInto(version).values(1, databaseVersion).execute();
+        populateDefaultVersionToDbIfEmpty();
     }
 
+    private void populateDefaultSettingsToDb(){
+        InsertQueryBuilder insertQueryToSettings = new InsertQueryBuilder(open());
+        Table settings = schema.getTable(DatabaseShema.getINSTANCE().settingsTableName);
+        insertQueryToSettings.insertInto(settings).values(1, 0, 0, LocalDateTime.now(), LocalDateTime.now()).execute();
+    }
+
+    private void populateDefaultVersionToDbIfEmpty(){
+        InsertQueryBuilder insertQuery = new InsertQueryBuilder(open());
+        Table version = schema.getTable(DatabaseShema.getINSTANCE().versionTableName);
+        insertQuery.insertInto(version).values(1, databaseVersion).execute();
+    }
     public int getDatabaseVersion(){
         return databaseVersion;
     }
 
     public int getDatabaseVersionFromDb(){
         SelectQueryBuilder query = new SelectQueryBuilder(open());
-        Table version = schema.getTable("version");
+        Table version = schema.getTable(DatabaseShema.getINSTANCE().versionTableName);
         var results = query.select().from(version).execute().getResult();
         if(results.isEmpty()){
             return -1;
