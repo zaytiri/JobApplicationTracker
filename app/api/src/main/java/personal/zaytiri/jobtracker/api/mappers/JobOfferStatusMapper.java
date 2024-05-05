@@ -34,6 +34,6 @@ public abstract class JobOfferStatusMapper extends Mapper<JobOfferStatus, JobOff
     public abstract JobOfferStatus modelToEntity(JobOfferStatusModel model);
 
     protected String getTablePrefix(){
-        return "status__";
+        return "job_offer_status__";
     }
 }
