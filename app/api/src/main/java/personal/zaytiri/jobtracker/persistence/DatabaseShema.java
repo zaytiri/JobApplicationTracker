@@ -38,6 +38,14 @@ public class DatabaseShema {
     // tag table
     public String tagTableName = "tag";
 
+    // settings table
+    public String settingsTableName = "settings";
+    public String appliedStatusColumnName = "applied_status";
+    public String closedStatusColumnName = "closed_status";
+
+    // version table
+    public String versionTableName = "version";
+
     // common
     public String idColumnName = "id";
     public String nameColumnName = "name";

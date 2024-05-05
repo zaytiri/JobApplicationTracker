@@ -244,6 +244,35 @@
             <default>null</default>
         </column>
     </table>
+    <table> <!-- table settings -->
+        <name>settings</name>
+        <column>
+            <name>id</name>
+            <type>integer</type>
+            <default>1</default>
+            <isprimarykey>true</isprimarykey>
+        </column>
+        <column>
+            <name>applied_status</name>
+            <type>numeric</type>
+            <default>null</default>
+        </column>
+        <column>
+            <name>closed_status</name>
+            <type>numeric</type>
+            <default>null</default>
+        </column>
+        <column>
+            <name>updated_at</name>
+            <type>numeric</type>
+            <default>null</default>
+        </column>
+        <column>
+            <name>created_at</name>
+            <type>numeric</type>
+            <default>null</default>
+        </column>
+    </table>
     <table> <!-- table version -->
         <name>version</name>
         <column>
