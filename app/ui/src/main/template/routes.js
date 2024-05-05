@@ -14,6 +14,7 @@ import {
   CreditIcon,
   PersonIcon,
 } from "./components/Icons/Icons";
+import { Settings } from '../views/settings/settings.js';
 
 var dashRoutes = [
   {
@@ -41,7 +42,7 @@ var dashRoutes = [
     path: "/settings",
     name: "Settings",
     icon: <CreditIcon color='inherit' />,
-    component: DraggableView,
+    component: Settings,
     layout: "/home",
   },
   // {
