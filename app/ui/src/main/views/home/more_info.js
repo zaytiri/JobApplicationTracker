@@ -133,13 +133,18 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   const checkJobUpdates = async () => {
     setLoading(true)
 
-    const response = await updateJobStatus(currentJobOffer.id);
-    if(response.success === false) return null;
+    await updateJobStatus(currentJobOffer.id)
+    .then((res) => {
+      if(res.success === false) {
+        setLoading(false)
+        return null;
+      }
 
-    onToggle();
-    setFetchDataAgain(true)
-    
-    setLoading(false)
+      onToggle();
+      setFetchDataAgain(true)
+      
+      setLoading(false)
+    })
   }
 
   return (
