@@ -91,6 +91,8 @@ export const Statistics = () => {
         return result
     }
 
+    const doJobsExist = (statistics['TotalAppliedJobsByDay'] !== undefined || statistics['TotalJobsByStatus'] !== undefined)
+
     return (
         <Flex flexDirection='column' pt={{ base: "120px", md: "75px" }}>
             <SimpleGrid columns={{ sm: 1, md: 2, xl: 3 }} spacing='24px' mb='20px'>
@@ -218,8 +220,8 @@ export const Statistics = () => {
                 </Card>
             </SimpleGrid>
             <Grid
-                templateColumns={{ sm: "1fr", lg: "2fr 1fr" }}
-                templateRows={{ lg: "repeat(2, auto)" }}
+                templateColumns={{ sm: "1fr", lg: `${doJobsExist ? "2fr 1fr" : "1"}` }}
+                templateRows={{ lg: "repeat(1, auto)" }}
                 gap='20px'>
                 {statistics['TotalAppliedJobsByDay'] !== undefined && <Card
                     bg={
@@ -262,7 +264,7 @@ export const Statistics = () => {
                     </Box>
                 </Card>
                 }
-                {(statistics['TotalAppliedJobsByDay'] === undefined || statistics['TotalJobsByStatus'] === undefined) && <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
+                {(!doJobsExist) && <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
                 <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
                       No Job Applications added yet.
                     </Text>
