@@ -29,7 +29,7 @@ import { MoreInfo } from "./more_info.js";
 import { ManageJobStatus } from "../../popups/manage_job_status.js";
 import { SearchBar } from "../../template/components/Navbars/SearchBar/SearchBar.js";
 import { RepeatIcon } from "@chakra-ui/icons";
-
+import { SankeymaticFeature } from "../../popups/sankeymatic_button.js";
 
 export const Home = () => {
   const textColor = useColorModeValue("gray.700", "white");
@@ -121,7 +121,8 @@ export const Home = () => {
         bg={bgProfile}
         p='24px'
         borderRadius='20px'
-        gap='20px'>
+        gap='20px'
+        alignItems='center'>
 
         {loading ?
           <Spinner
@@ -138,6 +139,7 @@ export const Home = () => {
           <Tooltip label='Click here to check updates from all job applications.'>
             <RepeatIcon boxSize={8} color="black.500" onClick={checkAllJobs} />
           </Tooltip>}
+        <SankeymaticFeature/>
         <Spacer />
         <SearchBar me='18px' findText={findText} />
 
