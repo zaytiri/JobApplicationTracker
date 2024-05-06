@@ -12,6 +12,7 @@ import {
   Link,
   Tooltip,
   Center,
+  Progress,
 } from "@chakra-ui/react";
 
 import {
@@ -32,7 +33,7 @@ import Card from "../../template/components/Card/Card.js";
 import CardBody from "../../template/components/Card/CardBody.js";
 import CardHeader from "../../template/components/Card/CardHeader.js";
 
-import { checkJobUpdate, remove } from "../../api/api_endpoints/job_offer_api.js"
+import { updateJobStatus, remove } from "../../api/api_endpoints/job_offer_api.js"
 import { StatusGraph } from "./graph_view.js";
 import { EditJobOffer } from "../../popups/edit_job_offer.js";
 
@@ -54,6 +55,8 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
 
     return elements;
   }
+  const [loading, setLoading] = useState(false)
+
   const [show, setShow] = useState(false)
   const handleToggleToShowDescription = () => setShow(!show)
 
@@ -128,11 +131,15 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   }
 
   const checkJobUpdates = async () => {
-    const response = await checkJobUpdate(currentJobOffer.id);
+    setLoading(true)
+
+    const response = await updateJobStatus(currentJobOffer.id);
     if(response.success === false) return null;
 
     onToggle();
     setFetchDataAgain(true)
+    
+    setLoading(false)
   }
 
   return (
@@ -145,6 +152,14 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           w='100%'
           boxShadow='0px 7px 18px 3px rgba(0, 0, 0, 0.2)'
         >
+          <Progress 
+            display={loading ? 'block' : 'none'}
+            align="center"
+            thickness='4px'
+            speed='0.65s'
+            color='blue.500'
+            size='xs' 
+            isIndeterminate />
           <Flex p='10px' alignItems='center'>
             <Spacer />
             <Tooltip label='Click here to check updates from the current job application.'>

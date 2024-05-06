@@ -19,7 +19,7 @@ import { Menu, Item, useContextMenu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 
 import { getStatusByJobOfferId, get, removeStatusFromJobOffer, editStatusFromJobOffer } from '../../api/api_endpoints/status_api';
-import { toast } from 'react-toastify';
+import { Zoom, toast } from 'react-toastify';
 
 export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
     const [nodes, setNodes] = useState([])

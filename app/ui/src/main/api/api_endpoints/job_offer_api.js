@@ -51,7 +51,7 @@ export const scrape = async function(url) {
   });
 };
 
-export const checkJobUpdate = async function(id) {
+export const updateJobStatus = async function(id) {
   return await axios.patch(baseUrl + "update-job-status", id, headers).then((response) => {
     return response.data;
   });
