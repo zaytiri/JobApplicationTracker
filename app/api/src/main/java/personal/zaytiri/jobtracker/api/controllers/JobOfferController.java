@@ -27,6 +27,7 @@ import personal.zaytiri.jobtracker.persistence.models.SettingsModel;
 import personal.zaytiri.jobtracker.persistence.repositories.base.Repository;
 import personal.zaytiri.makeitexplicitlyqueryable.pairs.Pair;
 import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Operators;
+import personal.zaytiri.makeitexplicitlyqueryable.sqlquerybuilder.querybuilder.query.enums.Order;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -435,6 +436,49 @@ public class JobOfferController {
 
         List<Map<String, String>> results = getOperation.execute(getOperationRequest);
         return new JobOfferMapperImpl().toEntity(results, false);
+    }
+
+    @GET
+    @Path("/diagram")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSankeymaticDiagram(){
+
+        GetOperation<JobOfferModel> getOperation = new GetOperation<>();
+        getOperation.setRepository(new Repository<>());
+
+        GetOperationRequest<JobOfferModel> getOperationRequest = new GetOperationRequest<>();
+        getOperationRequest.setModel(new JobOfferModel());
+        getOperationRequest.setFilters(new HashMap<>());
+        getOperationRequest.setOrderByColumn(null);
+
+        List<JobOffer> jobOffers = new JobOfferMapperImpl().toEntity(getOperation.execute(getOperationRequest), false);
+
+        Map<Integer, Integer> statistics = new HashMap<>();
+        for (JobOffer jo : jobOffers){
+            Map<String, Pair<String, Object>> filters = new HashMap<>();
+            filters.put(DatabaseShema.getINSTANCE().jobOfferIdColumnName, new Pair<>(Operators.EQUALS.value, jo.getId()));
+
+            GetOperation<JobOfferStatusModel> getJOSOperation = new GetOperation<>();
+            getJOSOperation.setRepository(new Repository<>());
+
+            GetOperationRequest<JobOfferStatusModel> getJOSOperationRequest = new GetOperationRequest<>();
+            getJOSOperationRequest.setModel(new JobOfferStatusModel());
+            getJOSOperationRequest.setFilters(filters);
+            getJOSOperationRequest.setOrderByColumn(new Pair<>(Order.DESCENDING.value, DatabaseShema.getINSTANCE().changedAtColumnName));
+
+            List<JobOfferStatus> jobOfferStatuses = new JobOfferStatusMapperImpl().toEntity(getOperation.execute(getOperationRequest), false);
+
+            for (JobOfferStatus jos : jobOfferStatuses){
+                int currentNumberOfJobOffers = statistics.getOrDefault(jos.getStatusId(), 0);
+
+                statistics.put(jos.getStatusId(), ++currentNumberOfJobOffers);
+            }
+        }
+
+        // todo: the current problem is how to automatically guess what order the status should be displayed
+        //  without the user setting up the order. Maybe the idea is to create an algorithm to calculate the order, somehow?
+
+        return Response.ok().entity("{}").build();
     }
 
 }
