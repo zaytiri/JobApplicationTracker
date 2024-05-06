@@ -1,4 +1,4 @@
-import { Button, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, Tooltip, useDisclosure, Link } from "@chakra-ui/react";
+import { Button, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, Tooltip, useDisclosure, Link, Spacer, Center } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/system";
 import React, { useState } from "react";
 import { Zoom, toast } from "react-toastify";
@@ -47,6 +47,10 @@ export const SankeymaticFeature = () => {
             });
     }
 
+    const generateDiagram = () => {
+        // call diagram endpoint
+    }
+
     return (
         <>
             <Tooltip label='Click here to get a Sankeymatic input to be used for creating a diagram.'>
@@ -63,6 +67,11 @@ export const SankeymaticFeature = () => {
                             The following input is a auto generated Sankeymatic input regarding the all job applications, statuses and statistics displayed in this app.
                             Copy the input and paste it into the Sankeymatic website to generate a diagram.
                         </Text>
+                        <Center mt='10px' mb='10px'>
+                            <Button colorScheme='blue' mr={3} onClick={generateDiagram}>
+                                GENERATE
+                            </Button>
+                        </Center>
                         <Textarea
                             value={sankeymaticInputDiagram}
                             onChange={setInput}
@@ -71,15 +80,15 @@ export const SankeymaticFeature = () => {
                         />
                     </ModalBody>
                     <ModalFooter>
-                    <Button colorScheme='blue' mr={3} onClick={copyInputDiagram}>
-                        Copy Diagram Input
-                    </Button>
-                    <Tooltip label="https://www.sankeymatic.com/build/">
-                        <Link href="https://www.sankeymatic.com/build/" isExternal>
-                            Go to Website
-                        </Link>
-                    </Tooltip>
-                </ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={copyInputDiagram}>
+                            Copy Diagram Input
+                        </Button>
+                        <Tooltip label="https://www.sankeymatic.com/build/">
+                            <Link href="https://www.sankeymatic.com/build/" isExternal>
+                                Go to Website
+                            </Link>
+                        </Tooltip>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </>
