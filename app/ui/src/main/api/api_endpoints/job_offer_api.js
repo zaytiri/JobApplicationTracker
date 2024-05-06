@@ -57,6 +57,17 @@ export const updateJobStatus = async function(id) {
   });
 };
 
+export const updateAllJobsStatus = async function(ids) {
+  let results = [];
+  console.log(ids)
+  for (let i = 0; i < ids.length; i++) {
+  results.push(await axios.patch(baseUrl + "update-job-status", ids[i], headers).then((response) => {
+      return response.data;
+    }))
+  }
+  return results
+};
+
 export const getJobOffersByStatus = async function() {
   return await axios.get(baseUrl + "job-offer-by-status", headers).then((response) => {
     return response.data;

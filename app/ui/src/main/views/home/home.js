@@ -13,6 +13,7 @@ import {
   useDisclosure,
   Spacer,
   Tooltip,
+  Spinner,
 } from "@chakra-ui/react";
 // Custom components
 import Card from "../../template/components/Card/Card.js";
@@ -21,7 +22,7 @@ import CardHeader from "../../template/components/Card/CardHeader.js";
 import JobApplicationTableRow from "../../template/components/Tables/JobApplicationTableRow.js";
 import { motion } from "framer-motion";
 
-import { get as getJobOffers, find } from "../../api/api_endpoints/job_offer_api.js"
+import { get as getJobOffers, find, updateAllJobsStatus } from "../../api/api_endpoints/job_offer_api.js"
 import { get as getStatus } from "../../api/api_endpoints/status_api.js"
 import { AddJobOffer } from "../../popups/add_job_offer.js"
 import { MoreInfo } from "./more_info.js";
@@ -43,6 +44,8 @@ export const Home = () => {
 
   const { isOpen, onToggle } = useDisclosure();
   const [hidden, setHidden] = useState(!isOpen)
+
+  const [loading, setLoading] = useState(false)
 
   const moreAction = (id) => {
     setCurrentJobOffer(jobOffers.find((jobOffer) => { return jobOffer.id === id }));
@@ -94,6 +97,15 @@ export const Home = () => {
     setJobOffers(response);
   }
 
+  const checkAllJobs = async () => {
+    setLoading(true)
+    await updateAllJobsStatus(jobOffers.map(jo => jo.id))
+      .then((res) => {
+        setFetchDataAgain(true)
+      });
+    setLoading(false)
+  }
+
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }} >
       <Flex
@@ -111,10 +123,22 @@ export const Home = () => {
         borderRadius='20px'
         gap='20px'>
 
-        <Tooltip label='Click here to check updates from all job applications.'>
-          <RepeatIcon boxSize={8} color="black.500" />
-        </Tooltip>
-        <Spacer/>
+        {loading ?
+          <Spinner
+            display={loading ? 'block' : 'none'}
+            align="center"
+            thickness='4px'
+            speed='0.65s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='md'
+            p="12px"
+          />
+          :
+          <Tooltip label='Click here to check updates from all job applications.'>
+            <RepeatIcon boxSize={8} color="black.500" onClick={checkAllJobs} />
+          </Tooltip>}
+        <Spacer />
         <SearchBar me='18px' findText={findText} />
 
         <AddJobOffer setFetchDataAgain={setFetchDataAgain} />
