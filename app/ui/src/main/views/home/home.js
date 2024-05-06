@@ -139,7 +139,7 @@ export const Home = () => {
           <Tooltip label='Click here to check updates from all job applications.'>
             <RepeatIcon boxSize={8} color="black.500" onClick={checkAllJobs} />
           </Tooltip>}
-        <SankeymaticFeature/>
+        {/* <SankeymaticFeature/>  */}
         <Spacer />
         <SearchBar me='18px' findText={findText} />
 
