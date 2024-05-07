@@ -1,7 +1,7 @@
 {
-  "name": "job-applications-tracker",
+  "name": "JobTrackr",
   "version": "1.0.0",
-  "description": "a job applications tracker integrated with sankeymatic.",
+  "description": "A job application tracker.",
   "main": "src/app/main.js",
   "scripts": {
     "start": "electron .",
