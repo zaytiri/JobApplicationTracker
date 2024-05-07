@@ -1,9 +1,5 @@
 // import
 import React from 'react';
-import Dashboard from "./views/Dashboard/Dashboard.js";
-import Tables from "./views/Dashboard/Tables.js";
-import Billing from "./views/Dashboard/Billing.js";
-import Profile from "./views/Dashboard/Profile.js";
 import { Home } from '../views/home/home.js';
 import { DraggableView } from '../views/draggable_view/draggable_view.js';
 import { Statistics } from '../views/statistics/statistics.js';
@@ -11,37 +7,36 @@ import { Statistics } from '../views/statistics/statistics.js';
 import {
   HomeIcon,
   StatsIcon,
-  CreditIcon,
-  PersonIcon,
 } from "./components/Icons/Icons";
 import { Settings } from '../views/settings/settings.js';
+import { SettingsIcon } from '@chakra-ui/icons';
 
 var dashRoutes = [
   {
     path: "/home",
     name: "Home",
-    icon: <CreditIcon color='inherit' />,
+    icon: <HomeIcon color='inherit' />,
     component: Home,
     layout: "/home",
   },
-  {
-    path: "/draggableview",
-    name: "Draggable View",
-    icon: <CreditIcon color='inherit' />,
-    component: DraggableView,
-    layout: "/home",
-  },
+  // {
+  //   path: "/draggableview",
+  //   name: "Draggable View",
+  //   icon: <CreditIcon color='inherit' />,
+  //   component: DraggableView,
+  //   layout: "/home",
+  // },
   {
     path: "/statistics",
     name: "Statistics",
-    icon: <CreditIcon color='inherit' />,
+    icon: <StatsIcon color='inherit' />,
     component: Statistics,
     layout: "/home",
   },
   {
     path: "/settings",
     name: "Settings",
-    icon: <CreditIcon color='inherit' />,
+    icon: <SettingsIcon color='inherit' />,
     component: Settings,
     layout: "/home",
   },
