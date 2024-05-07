@@ -34,6 +34,9 @@ public class Statistics {
         getOperationRequest.setOrderByColumn(null);
         List<JobOffer> results = new JobOfferMapperImpl().toEntity(getOperation.execute(getOperationRequest), false);
 
+        if(results.isEmpty()){
+            return new HashMap<>();
+        }
         Map<String, List<IStatistic<JobOffer>>> calculatedStatistics = new HashMap<>();
         for(IStatistic<JobOffer> stat : statistics){
 
