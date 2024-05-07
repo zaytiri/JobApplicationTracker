@@ -136,3 +136,4 @@ app/api/build/
 app/ui/build/
 /app/ui/external
 /app/ui/Job Application Tracker-win32-x64
+/app/ui/JobTrackr-win32-x64
