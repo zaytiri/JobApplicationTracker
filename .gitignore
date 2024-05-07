@@ -135,3 +135,4 @@ app/api/build/
 # Electron files
 app/ui/build/
 /app/ui/external
+/app/ui/Job Application Tracker-win32-x64
