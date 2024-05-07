@@ -23,14 +23,14 @@ Job applications can also easily be added by providing the URL of the offer and 
 
 ### Gallery for UI
 
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/1.png" width="400" height="300" />
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/2.png" width="400" height="300" /><br>
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/3.png" width="400" height="300" />
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/4.png" width="400" height="300" /><br>
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/5.png" width="400" height="300" />
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/6.png" width="400" height="300" /><br>
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/7.png" width="400" height="300" />
-<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/8.png" width="400" height="300" /><br>
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/1.png" width="700" height="400" />
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/2.png" width="700" height="300" /><br>
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/3.png" width="700" height="300" />
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/4.png" width="700" height="300" /><br>
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/5.png" width="700" height="300" />
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/6.png" width="700" height="300" /><br>
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/7.png" width="700" height="300" />
+<img src="https://github.com/zaytiri/JobApplicationTracker/blob/main/readme-imgs/8.png" width="700" height="300" /><br>
 
 <a name="features"></a>
 ## Features
@@ -86,4 +86,4 @@ Currently, fully maintaining it.
 <a name="shoutout"></a>
 ## Shoutout
 
-The UI was fully based on this [free template]() made by .
+The UI was fully based on this [free template](https://www.creative-tim.com/product/argon-dashboard-chakra) made by Creative Tim.
