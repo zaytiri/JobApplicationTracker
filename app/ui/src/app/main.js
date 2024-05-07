@@ -7,20 +7,21 @@ const isDev = !app.isPackaged;
 
 function createWindow() {
   const win = new BrowserWindow({
-    // width: 1200,
-    // height: 800,
+    // width: 1500,
+    // height: 900,
     backgroundColor: "white",
     webPreferences: {
       nodeIntegration: false,
       worldSafeExecuteJavaScript: true,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
-    }
+    },
+    autoHideMenuBar: true
   })
 
   win.loadFile('src/app/main.html');
   win.maximize();
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 }
 
 if (isDev) {
