@@ -24,66 +24,28 @@ export default function Footer(props) {
         }}
         mb={{ base: "20px", xl: "0px" }}>
         &copy; {1900 + new Date().getYear()},{" "}
+        <Text as='span'><Text as='span' fontWeight="bold">Job Application Tracker</Text> made by zaytiri.</Text>
+        <br/>
         <Text as='span'>
-          {document.documentElement.dir === "rtl"
-            ? " مصنوع من ❤️ بواسطة"
-            : "Made with ❤️ by "}
+        Base template made by
         </Text>
         <Link
           color='blue.400'
           href='https://www.creative-tim.com'
           target='_blank'>
-          {document.documentElement.dir === "rtl"
-            ? " توقيت الإبداعية"
-            : "Creative Tim "}
+          {" Creative Tim "}
         </Link>
-        &
+         & 
         <Link color='blue.400' href='https://www.simmmple.com' target='_blank'>
-          {document.documentElement.dir === "rtl" ? "سيممبل " : " Simmmple"}
+        {" Simmmple."}
         </Link>
-        {document.documentElement.dir === "rtl"
-          ? "للحصول على ويب أفضل"
-          : " for a better web"}
       </Text>
       <List display='flex'>
-        <ListItem
-          me={{
-            base: "20px",
-            md: "44px",
-          }}>
-          <Link color='gray.400' href='https://www.creative-tim.com'>
-            {document.documentElement.dir === "rtl"
-              ? "توقيت الإبداعية"
-              : "Creative Tim"}
-          </Link>
-        </ListItem>
-        <ListItem
-          me={{
-            base: "20px",
-            md: "44px",
-          }}>
-          <Link color='gray.400' href='https://www.simmmple.com'>
-            {document.documentElement.dir === "rtl" ? "سيممبل" : "Simmmple"}
-          </Link>
-        </ListItem>
-        <ListItem
-          me={{
-            base: "20px",
-            md: "44px",
-          }}>
-          <Link
-            color='gray.400'
-            href='#blog'
-            href='https://creative-tim.com/blog'>
-            {document.documentElement.dir === "rtl" ? "مدونة" : "Blog"}
-          </Link>
-        </ListItem>
         <ListItem>
           <Link
             color='gray.400'
-            href='#license'
-            href='https://www.creative-tim.com/license'>
-            {document.documentElement.dir === "rtl" ? "رخصة" : "License"}
+            href='https://github.com/zaytiri/JobApplicationTracker'>
+            Github
           </Link>
         </ListItem>
       </List>
