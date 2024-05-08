@@ -145,7 +145,6 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
         setApplied(!applied);
 
         const response = await getSettings();
-        console.log(response)
         setStatusId(!applied ? response.appliedStatus : 0)
       };
 

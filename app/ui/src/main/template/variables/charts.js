@@ -1,5 +1,4 @@
 export const barChartData = (totalJobsByStatus) => {
-  console.log(totalJobsByStatus)
   if(totalJobsByStatus === undefined){
     return;
   }
@@ -13,7 +12,6 @@ export const barChartData = (totalJobsByStatus) => {
 }
 
 export const barChartOptions = (totalJobsByStatus) => {
-  console.log(totalJobsByStatus)
   if(totalJobsByStatus === undefined){
     return;
   }
@@ -88,7 +86,6 @@ export const barChartOptions = (totalJobsByStatus) => {
 }
 
 export function lineChartData (totalJobByDay) {
-  console.log(totalJobByDay)
   if(totalJobByDay === undefined){
     return;
   }
@@ -102,7 +99,6 @@ export function lineChartData (totalJobByDay) {
 }
 
 export function lineChartOptions (totalJobByDay) {
-  console.log(totalJobByDay)
   if(totalJobByDay === undefined){
     return;
   }

@@ -18,7 +18,6 @@ export const DraggableView = () => {
       try {
         const response = await getJobOffersByStatus();
         setData(response);
-        console.log(response);
       } catch (error) {
         console.error("Error fetching job offers:", error);
       }

@@ -62,7 +62,6 @@ export const Statistics = () => {
             try {
                 const response = await getStatistics();
                 setStatistics(response);
-                console.log(response)
             } catch (error) {
                 console.error("Error fetching job offers:", error);
             }
