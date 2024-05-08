@@ -52,6 +52,16 @@ _Disclaimer: The order does not necessarily describe the priority of development
 
 Any new features are **_very_** welcomed. If you need some feature or you have any suggestion, open an issue and I can analyse if it's feasible.
 
+### Auto fill feature
+When adding a new job offer, by providing first the specific URL of the job offer, the program can scrape the link for all the relevant information to create a new job offer in the system.
+
+Currently, the feature supports the following platforms with the respective URL structure that the system supports:
+- LinkedIn: "https://www.linkedin.com/jobs/view/<JOB_UID>"
+- GlassDoor: "https://www.glassdoor.com/Job/<JOB_UID>" or "https://www.glassdoor.com/job-listing/<JOB_UID"
+- Xing: "https://www.xing.com/jobs/<JOB_UID>"
+
+(Note: The Tootltip in this feature will say that currently it only works for LinkedIn, but that's not the case. Will be updated in the next release.)
+
 ### Future features
 All future features are documented in the above table with a ❌ icon. More can be added with time.
 
