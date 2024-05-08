@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
+import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
 
 import AdminLayout from "./template/layouts/Admin.js";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -16,10 +16,10 @@ export const JobTracker = () => {
   return (
     <ChakraProvider theme={theme} resetCss={false} position="relative">
     <HashRouter>
-      <Switch>
-        <Route path={`/home`} component={AdminLayout} />
-        <Redirect from={`/`} to="/home/home" />
-      </Switch>
+      <Routes>
+        <Route path={`/home/*`} element={<AdminLayout/>} ></Route>
+        <Route exact path={`/`} element={<Navigate to="/home/home" />} ></Route>
+      </Routes>
     </HashRouter>
   </ChakraProvider>
   );

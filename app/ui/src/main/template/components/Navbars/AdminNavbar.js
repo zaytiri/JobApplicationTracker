@@ -10,8 +10,25 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import AdminNavbarLinks from "./AdminNavbarLinks";
+import { useLocation } from "react-router-dom";
 
 export default function AdminNavbar(props) {
+  const location = useLocation();
+  const [brandText, setBrandText] = useState('')
+  const [secondary, setSecondary] = useState('')
+  const {
+    variant,
+    children,
+    fixed,
+    // secondary,
+    // brandText,
+    onOpen,
+    onRouteChange,
+    onNavbarChange,
+    routes,
+    ...rest
+  } = props;
+
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -22,15 +39,10 @@ export default function AdminNavbar(props) {
     }
   })
 
-  const {
-    variant,
-    children,
-    fixed,
-    secondary,
-    brandText,
-    onOpen,
-    ...rest
-  } = props;
+  useEffect(() => {
+    setBrandText(onRouteChange(routes))
+    setSecondary(onNavbarChange(routes))
+  }, [location.pathname, onRouteChange, onNavbarChange]);
 
   // Here are all the props that may change depending on navbar's type or state.(secondary, variant, scrolled)
   let mainText = (fixed && scrolled) ? useColorModeValue("gray.700", "gray.200") : useColorModeValue("white", "gray.200");
@@ -121,7 +133,7 @@ export default function AdminNavbar(props) {
         alignItems={{ xl: "center" }}
       >
         <Box mb={{ sm: "8px", md: "0px" }}>
-          <Breadcrumb>
+          {/* <Breadcrumb>
             <BreadcrumbItem color={mainText}>
               <BreadcrumbLink href="#" color={secondaryText}>
                 Pages
@@ -133,7 +145,7 @@ export default function AdminNavbar(props) {
                 {brandText}
               </BreadcrumbLink>
             </BreadcrumbItem>
-          </Breadcrumb>
+          </Breadcrumb> */}
           {/* Here we create navbar brand, based on route name */}
           <Link
             color={mainText}

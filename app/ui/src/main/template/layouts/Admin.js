@@ -2,31 +2,20 @@
 import {
   Portal,
   useDisclosure,
-  Stack,
   Box,
   useColorMode,
 } from "@chakra-ui/react";
-import Configurator from "../components/Configurator/Configurator";
 import Footer from "../components/Footer/Footer.js";
-import {
-  ArgonLogoDark,
-  ArgonLogoLight,
-  ChakraLogoDark,
-  ChakraLogoLight,
-} from "../components/Icons/Icons";
 // Layout components
 import AdminNavbar from "../components/Navbars/AdminNavbar.js";
 import Sidebar from "../components/Sidebar/Sidebar.js";
 import React, { useState } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import routes from "../routes.js";
-// Custom Chakra theme
-import FixedPlugin from "../components/FixedPlugin/FixedPlugin";
 // Custom components
 import MainPanel from "../components/Layout/MainPanel";
 import PanelContainer from "../components/Layout/PanelContainer";
 import PanelContent from "../components/Layout/PanelContent";
-import bgAdmin from "../assets/img/admin-background.png";
 
 export default function Dashboard(props) {
   const { ...rest } = props;
@@ -34,6 +23,7 @@ export default function Dashboard(props) {
   const [fixed, setFixed] = useState(false);
   const { colorMode } = useColorMode();
   // functions for changing the states from components
+
   const getRoute = () => {
     return window.location.pathname !== "/admin/full-screen-maps";
   };
@@ -74,7 +64,7 @@ export default function Dashboard(props) {
           window.location.href.indexOf(routes[i].layout + routes[i].path) !== -1
         ) {
           if (routes[i].secondaryNavbar) {
-            return routes[i].secondaryNavbar;
+          return routes[i].secondaryNavbar;
           }
         }
       }
@@ -92,10 +82,10 @@ export default function Dashboard(props) {
       if (prop.layout === "/home") {
         return (
           <Route
-            path={prop.layout + prop.path}
-            component={prop.component}
-            key={key}
-          />
+              path={prop.path}
+              element={<prop.component />}
+              key={prop.name}
+            ></Route>
         );
       } else {
         return null;
@@ -111,8 +101,7 @@ export default function Dashboard(props) {
         minH='40vh'
         w='100%'
         position='absolute'
-        bgImage={colorMode === "light" ? bgAdmin : "none"}
-        bg={colorMode === "light" ? bgAdmin : "navy.900"}
+        bg={colorMode === "light" ? "#6dc3e8" : "navy.900"}
         bgSize='cover'
         top='0'
       />
@@ -148,8 +137,11 @@ export default function Dashboard(props) {
         <Portal>
           <AdminNavbar
             onOpen={onOpen}
-            brandText={getActiveRoute(routes)}
-            secondary={getActiveNavbar(routes)}
+            // brandText={getActiveRoute(routes)}
+            // secondary={getActiveNavbar(routes)}
+            onRouteChange={getActiveRoute}
+            onNavbarChange={getActiveNavbar}
+            routes={routes}
             fixed={fixed}
             {...rest}
           />
@@ -157,10 +149,10 @@ export default function Dashboard(props) {
         {getRoute() ? (
           <PanelContent>
             <PanelContainer>
-              <Switch>
+              <Routes>
                 {getRoutes(routes)}
-                <Redirect from='/home' to='/home/home' />
-              </Switch>
+                <Route key="homeRedirect" path={`/home`} element={<Navigate to="/home/home" />} ></Route>
+              </Routes>
             </PanelContainer>
           </PanelContent>
         ) : null}
