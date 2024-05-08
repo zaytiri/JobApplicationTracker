@@ -5,7 +5,8 @@
   "main": "src/app/main.js",
   "scripts": {
     "start": "electron .",
-    "watch": "webpack --config webpack.common.js --watch"
+    "watch": "webpack --config webpack.common.js --watch",
+    "build": "electron-packager . JobTrackr --extra-resources=.\\external"
   },
   "author": "zaytiri",
   "license": "MIT",
