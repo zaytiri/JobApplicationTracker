@@ -66,7 +66,7 @@ The JDK 17 is necessary to run .jar executable files. For now, the version canno
 <a name="installation"></a>
 ## Installation
 
-After downloading the latest executable file available in the [Releases]() page, right-click the setup.exe and follow instructions.
+After downloading the latest executable file available in the [Releases](https://github.com/zaytiri/JobApplicationTracker/releases) page, right-click the jobtrackr_setup.exe and follow the instructions from the installer.
 
 <a name="support"></a>
 ## Support
