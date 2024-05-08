@@ -143,7 +143,7 @@ export const ManageJobStatus = () => {
                                 <Tbody>
                                     {status?.length > 0 && status.map((row) => {
                                         return (
-                                            <Tr>
+                                            <Tr key={row.name}>
                                                 <Td
                                                     pl="0px"
                                                     borderColor={borderColor}>
