@@ -78,8 +78,12 @@ The JDK 17 is necessary to run .jar executable files. For now, the version canno
 
 After downloading the latest executable file available in the [Releases](https://github.com/zaytiri/JobApplicationTracker/releases) page, right-click the jobtrackr_setup.exe and follow the instructions from the installer.
 
+Installing should take a few minutes due to some third party libraries but this is planned to be reduced in the upcoming releases.
+
 <a name="support"></a>
 ## Support
+
+1. If you successfully installed the app but when trying to add a job offer or add a new status, if the popup does not disappear and the button appears to not do anything this could mean that you do not meet the JDK 17 requirement. Please check again if the JDK version you have for java is 17. You can also open a Command Prompt and input the following command: `java -version` 
 
 If any issues/problems are encountered, please feel free to open an issue.
 
