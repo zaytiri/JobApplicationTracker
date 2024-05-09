@@ -62,6 +62,12 @@ Currently, the feature supports the following platforms with the respective URL 
 
 (Note: The Tootltip in this feature will say that currently it only works for LinkedIn, but that's not the case. Will be updated in the next release.)
 
+### Database
+The app stores all persistent information in a local database which should be available in the following folder:
+    `C:\Users\<yourusername>\jobtracker\data` containing a file named `jobtracker.db`.
+
+This file contains all information and if deleted or modified, the saved information in the app could be either deleted or corrupted, respectively.
+
 ### Future features
 All future features are documented in the above table with a ❌ icon. More can be added with time.
 
@@ -78,7 +84,7 @@ The JDK 17 is necessary to run .jar executable files. For now, the version canno
 
 After downloading the latest executable file available in the [Releases](https://github.com/zaytiri/JobApplicationTracker/releases) page, right-click the jobtrackr_setup.exe and follow the instructions from the installer.
 
-Installing should take a few minutes due to some third party libraries but this is planned to be reduced in the upcoming releases.
+1. Installing should take a few minutes due to some third party libraries but this is planned to be reduced in the upcoming releases.
 
 <a name="support"></a>
 ## Support
