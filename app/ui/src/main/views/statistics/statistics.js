@@ -6,6 +6,7 @@ import {
     Grid,
     Progress,
     SimpleGrid,
+    Spacer,
     Stat,
     StatLabel,
     StatNumber,
@@ -55,6 +56,7 @@ export const Statistics = () => {
         'August', 'September', 'October', 'November', 'December'
     ];
 
+    const [toggleBarChartStatistics, setToggleBarChartStatistics] = useState(true)
     const [statistics, setStatistics] = useState({});
     const [fetchDataAgain, setFetchDataAgain] = useState(true);
     useEffect(() => {
@@ -90,7 +92,7 @@ export const Statistics = () => {
         return result
     }
 
-    const doJobsExist = (statistics['TotalAppliedJobsByDay'] !== undefined || statistics['TotalJobsByStatus'] !== undefined)
+    const doJobsExist = (statistics['TotalAppliedJobsByDay'] !== undefined || statistics['TotalJobsByLatestStatus'] !== undefined)
 
     return (
         <Flex flexDirection='column' pt={{ base: "120px", md: "75px" }}>
@@ -249,23 +251,37 @@ export const Statistics = () => {
                     </Box>
                 </Card>
                 }
-                {statistics['TotalJobsByStatus'] !== undefined && <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
-                    <Flex direction='column' mb='40px' p='28px 0px 0px 22px'>
-                        <Text color='gray.400' fontSize='sm' fontWeight='bold' mb='6px'>
-                            Total Job Applications
-                        </Text>
-                        <Text color={textColor} fontSize='lg' fontWeight='bold'>
-                            by Status
-                        </Text>
-                    </Flex>
-                    <Box minH='300px'>
-                        <BarChart chartData={barChartData(statistics['TotalJobsByStatus'])} chartOptions={barChartOptions(statistics['TotalJobsByStatus'])} />
-                    </Box>
-                </Card>
+                {statistics['TotalJobsByLatestStatus'] !== undefined &&
+                    statistics['TotalJobsByStatus'] !== undefined &&
+                    <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
+                        <Flex direction='column' mb='40px' p='28px 0px 0px 22px'>
+                            <Flex alignItems='center'>
+                                <Text color='gray.400' fontSize='sm' fontWeight='bold' mb='6px'>
+                                    Total Job Applications
+                                </Text>
+                                <Spacer />
+                                <Button mr='5px' size='md' onClick={() => setToggleBarChartStatistics(!toggleBarChartStatistics)}>
+                                    <Text fontSize='10px' mb='0'>
+                                    Switch to Chart by <br/> {toggleBarChartStatistics ? "Latest" : ""} Status
+                                    </Text>
+                                </Button>
+                            </Flex>
+                            <Text color={textColor} fontSize='lg' fontWeight='bold'>
+                                by {toggleBarChartStatistics ? "" : "Latest"} Status
+                            </Text>
+                        </Flex>
+
+                        <Box minH='300px' display={!toggleBarChartStatistics ? "block" : "none"}>
+                            <BarChart chartData={barChartData(statistics['TotalJobsByLatestStatus'])} chartOptions={barChartOptions(statistics['TotalJobsByLatestStatus'])} />
+                        </Box>
+                        <Box minH='300px' display={toggleBarChartStatistics ? "block" : "none"}>
+                            <BarChart chartData={barChartData(statistics['TotalJobsByStatus'])} chartOptions={barChartOptions(statistics['TotalJobsByStatus'])} />
+                        </Box>
+                    </Card>
                 }
                 {(!doJobsExist) && <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
-                <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
-                      No Job Applications added yet.
+                    <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
+                        No Job Applications added yet.
                     </Text>
                 </Card>}
             </Grid>
