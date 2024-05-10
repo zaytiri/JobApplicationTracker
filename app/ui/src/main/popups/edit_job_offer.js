@@ -51,6 +51,8 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
     const [notes, setNotes] = useState('')
 
     const setCompanyWithCharacterLimitation = (value) => {
+        if(value === undefined) return
+        console.log(value)
         if(value.length > 21 ){
             return
         }

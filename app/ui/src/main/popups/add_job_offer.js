@@ -49,7 +49,9 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
     const [statusId, setStatusId] = useState(0)
 
     const setCompanyWithCharacterLimitation = (value) => {
-        if(value.length > 21 ){
+        if (value === undefined) return
+
+        if (value.length > 21) {
             return
         }
 
