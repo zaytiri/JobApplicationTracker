@@ -65,6 +65,10 @@ export const MoreInfo = ({ statuses, currentJobOffer, currentStatus, jobOffers, 
   const handleToggleToShowGraph = () => setShowGraph(!showGraph)
 
   const [currentStatusMoreInfo, setCurrentStatusMoreInfo] = useState([])
+  const handleToggleToUpdateCurrentStatus = () => {
+    setCurrentStatusMoreInfo(currentStatus)
+    setShowGraph(false)
+  }
 
   const removeJobOffer = async (id) => {
     const response = await remove(id);
@@ -222,7 +226,7 @@ export const MoreInfo = ({ statuses, currentJobOffer, currentStatus, jobOffers, 
           <StatusDropdown
             statuses={statuses}
             currentStatus={currentStatusMoreInfo}
-            setCurrentStatus={setCurrentStatusMoreInfo}
+            setCurrentStatus={handleToggleToUpdateCurrentStatus}
             currentJobOffer={currentJobOffer} />
         </Flex>
       </CardHeader>
