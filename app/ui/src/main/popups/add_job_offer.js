@@ -21,6 +21,8 @@ import {
     Divider,
     Spinner,
     Text,
+    Flex,
+    Center,
 
 } from "@chakra-ui/react";
 
@@ -58,24 +60,23 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
         setCompany(value);
     }
 
-    const linkHandleChange = async (event) => {
-        const url = event.target.value;
+    const linkHandleChange = async (url) => {
         setLink(url);
 
         if (url === '') return;
 
         setLoadingScrape(true);
-        let response = {}
-        try {
-            response = await scrape(url);
+        let response = await scrape(url);
 
-            setCompanyWithCharacterLimitation(response.company);
-            setRole(response.role);
-            setLocation(response.location);
-            setDescription(response.description);
+        if (response.success === false) {
+            let error_message = 'The following error occurred when scraping information: '
+            if (response.error_id === 1) {
+                error_message += "This link is not supported by the feature. Only works for LinkedIn, GlassDoor ad Xing platforms. For more information on the URL structure, see the Github README.md on 'Auto fill feature' section."
+            } else if (response.error_id === 2) {
+                error_message += "The request was denied by the platform (429 HTTP error code). Try again later."
+            }
 
-        } catch (error) {
-            toast.error('Something went wrong while scraping website. Try again later if failing more than two times.', {
+            toast.error(error_message, {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -85,7 +86,12 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
                 progress: undefined,
                 theme: "colored",
                 transition: Zoom,
-                });
+            });
+        } else {
+            setCompanyWithCharacterLimitation(response.company);
+            setRole(response.role);
+            setLocation(response.location);
+            setDescription(response.description);
         }
 
         setLoadingScrape(false);
@@ -123,7 +129,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
             progress: undefined,
             theme: "colored",
             transition: Zoom,
-            });
+        });
     }
 
     useEffect(() => {
@@ -157,7 +163,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
 
         const response = await getSettings();
         setStatusId(!applied ? response.appliedStatus : 0)
-      };
+    };
 
     return (
         <>
@@ -179,19 +185,22 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
                     <ModalCloseButton onClick={resetModal} />
                     <ModalBody pb={6}>
                         <FormControl>
-                            <Tooltip label='By providing the link offer, the information can be filled in automatically to the relevant fields. Currently, only works for LinkedIn.'>
+                            <Tooltip label='By providing the link offer, the information can be filled in automatically to the relevant fields. Currently, only works for LinkedIn, GlassDoor and Xing.'>
                                 <FormLabel>Job Offer URL</FormLabel>
                             </Tooltip>
-                            <Input value={link} onChange={linkHandleChange} placeholder='www.job-offer-for-google-from-linkedin.com' />
-                            <Spinner
-                                display={loadingScrape ? 'block' : 'none'}
-                                align="center"
-                                thickness='4px'
-                                speed='0.65s'
-                                emptyColor='gray.200'
-                                color='blue.500'
-                                size='xl'
-                            />
+                            <Flex alignItems="center" gap='5px'>
+                                <Spinner
+                                    display={loadingScrape ? 'block' : 'none'}
+                                    align="center"
+                                    thickness='4px'
+                                    speed='0.65s'
+                                    emptyColor='gray.200'
+                                    color='blue.500'
+                                    size='md'
+                                    p="10px"
+                                />
+                                <Input value={link} onChange={(event) => linkHandleChange(event.target.value)} placeholder='www.job-offer-for-google-from-linkedin.com' />
+                            </Flex>
                         </FormControl>
                         <Divider mt='10px' mb='10px' />
                         <Grid

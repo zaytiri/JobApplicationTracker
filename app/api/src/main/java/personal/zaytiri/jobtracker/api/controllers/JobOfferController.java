@@ -255,7 +255,8 @@ public class JobOfferController {
         WebScraper scraper = WebScraperFactory.findSuitableScraper(url);
         if(scraper == null){
             JSONObject noSuitableResponse = new JSONObject();
-            noSuitableResponse.put("message", "no suitable scraper found.");
+            noSuitableResponse.put("success", false);
+            noSuitableResponse.put("error_id", 1);
             return Response.ok().entity(noSuitableResponse.toString()).build();
         }
 
@@ -264,6 +265,11 @@ public class JobOfferController {
         } catch (IOException e) {
             obj.put("success", false);
             obj.put("message", e);
+
+            if(e.getMessage().contains("429")){
+                obj.put("error_id", 2);
+            }
+
             return Response.ok().entity(obj).build();
         }
 
