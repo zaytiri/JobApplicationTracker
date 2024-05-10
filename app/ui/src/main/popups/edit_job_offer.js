@@ -58,7 +58,7 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
             location: location,
             link: link,
             description: description,
-            appliedAt: appliedAt === '' ? new Date(appliedAt) : new Date(appliedAt).toISOString(),
+            appliedAt: (appliedAt === '' || appliedAt === 'NaN-NaN-NaNTNaN:NaN')? new Date(appliedAt) : new Date(appliedAt).toISOString(),
             statusId: statusId.toString(),
             interviewNotes: notes,
         }
