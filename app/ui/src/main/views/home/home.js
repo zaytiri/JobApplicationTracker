@@ -14,6 +14,7 @@ import {
   Spacer,
   Tooltip,
   Spinner,
+  Center,
 } from "@chakra-ui/react";
 // Custom components
 import Card from "../../template/components/Card/Card.js";
@@ -45,7 +46,8 @@ export const Home = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [hidden, setHidden] = useState(!isOpen)
 
-  const [loading, setLoading] = useState(false)
+  const [loadingAllJobsUpdate, setLoadingAllJobsUpdate] = useState(false)
+  const [loadingAllJobs, setLoadingAllJobs] = useState(true)
 
   const moreAction = (id) => {
     setCurrentJobOffer(jobOffers.find((jobOffer) => { return jobOffer.id === id }));
@@ -80,6 +82,9 @@ export const Home = () => {
       fetchData();
       setFetchDataAgain(false);
     }
+
+    setLoadingAllJobs(false)
+
   }, [fetchDataAgain]);
 
   const setGlobalJobOffers = (response) => {
@@ -98,12 +103,12 @@ export const Home = () => {
   }
 
   const checkAllJobs = async () => {
-    setLoading(true)
+    setLoadingAllJobsUpdate(true)
     await updateAllJobsStatus(jobOffers.map(jo => jo.id))
       .then((res) => {
         setFetchDataAgain(true)
       });
-    setLoading(false)
+    setLoadingAllJobsUpdate(false)
   }
 
   return (
@@ -124,9 +129,9 @@ export const Home = () => {
         gap='20px'
         alignItems='center'>
 
-        {loading ?
+        {loadingAllJobsUpdate ?
           <Spinner
-            display={loading ? 'block' : 'none'}
+            display={loadingAllJobsUpdate ? 'block' : 'none'}
             align="center"
             thickness='4px'
             speed='0.65s'
@@ -154,14 +159,24 @@ export const Home = () => {
         gap='20px'>
         <Card overflowX={{ sm: jobOffers?.length === 0 ? "hidden" : "scroll", xl: "hidden" }} pb="0px">
           <CardHeader p="6px 0px 22px 0px">
-            <Flex flexDirection='row'>
+            <Flex flexDirection='row' gap='15px'>
               <Text fontSize="xl" color={textColor} fontWeight="bold">
                 Job Applications
               </Text>
-
+              <Spinner
+                        display={loadingAllJobs ? 'block' : 'none'}
+                        align="center"
+                        thickness='4px'
+                        speed='0.65s'
+                        emptyColor='gray.200'
+                        color='blue.500'
+                        size='md'
+                        p="10px"
+                      />
             </Flex>
           </CardHeader>
           <CardBody>
+          
             <Table variant="simple" color={textColor}>
               <Thead>
                 <Tr my=".8rem" pl="0px" color="gray.400" >
@@ -192,9 +207,9 @@ export const Home = () => {
                 })}
                 {jobOffers?.length === 0 &&
                   <Tr style={{ textAlign: 'center' }}>
-                    <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
-                      No Job Applications added yet.
-                    </Text>
+                      <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
+                        No Job Applications added yet.
+                      </Text>
                   </Tr>
                 }
               </Tbody>
