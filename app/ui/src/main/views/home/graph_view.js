@@ -24,8 +24,8 @@ import { Zoom, toast } from 'react-toastify';
 export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
     const [nodes, setNodes] = useState([])
     const [edges, setEdges] = useState([])
-    const [edgeIdToEdit, setEdgeIdToEdit] = useState(0)
-    const [changedEdgeLabel, setChangedEdgeLabel] = useState(new Date())
+    const [nodeIdToEdit, setNodeIdToEdit] = useState(0)
+    const [changedEdgeLabel, setChangedEdgeLabel] = useState('')
 
     const [isNetworkChanged, setIsNetworkChanged] = useState(false)
     const containerRef = useRef(null);
@@ -34,7 +34,6 @@ export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     const NODE_MENU_ID = 'NODE_MENU';
-    const EDGE_MENU_ID = 'EDGE_MENU';
 
     const { show } = useContextMenu();
 
@@ -66,19 +65,20 @@ export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
     }
 
     const openModalToEditEdge = ({ props }) => {
-        setEdgeIdToEdit(props.key)
+        setNodeIdToEdit(props.key)
+        setChangedEdgeLabel(new Date(props.date).toISOString().split('.')[0])
         onOpen()
     }
 
-    const editEdge = async () => {
-        const response = await editStatusFromJobOffer(edgeIdToEdit, {date: new Date(changedEdgeLabel).toISOString().split('.')[0]})
+    const editEdge = async () => {        
+        const response = await editStatusFromJobOffer(nodeIdToEdit, {date: changedEdgeLabel})
 
         if (response.success === false) return null;
 
         setIsNetworkChanged(true)
         onClose()
 
-        toast.success('Label Date was edited.', {
+        toast.success('Date was updated.', {
             position: "top-center",
             autoClose: 5000,
             hideProgressBar: false,
@@ -136,14 +136,14 @@ export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
 
         setNodes(nodes)
         setEdges(edges)
-        return constructNetwork(nodes, edges)
+        return constructNetwork(nodes, edges, data)
     }
 
     const getStatusById = (id, status) => {
         return status.find((status) => { return status.id === id });
     }
 
-    const constructNetwork = (nodes, edges) => {
+    const constructNetwork = (nodes, edges, statuses) => {
         const data = { nodes, edges };
         const options = {
             interaction: {
@@ -155,11 +155,10 @@ export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
         network.on("oncontext", function (params) {
             if (params.nodes.length > 0) {
                 const nodeId = params.nodes[0];
-                handleContextMenu(params.event, NODE_MENU_ID, {key: nodeId})
-            } else {
-                const edgeId = params.edges[0];
-                const edge = edges.find((edge) => { return edge.id === edgeId })
-                handleContextMenu(params.event, EDGE_MENU_ID, {key: edge.to, label: edge.label})
+                const node = getStatusById(nodeId, statuses);
+                const date = node.changedAt[0] + "-" + node.changedAt[1].toString().padStart(2, '0') + "-" + node.changedAt[2].toString().padStart(2, '0');
+
+                handleContextMenu(params.event, NODE_MENU_ID, {key: nodeId, date: date})
             }
         });
     }
@@ -187,9 +186,7 @@ export const StatusGraph = ({ jobOfferId, setFetchDataAgain, closeModal }) => {
 
             <Menu id={NODE_MENU_ID}>
                 <Item onClick={removeNode}>Remove</Item>
-            </Menu>
-            <Menu id={EDGE_MENU_ID}>
-                <Item onClick={openModalToEditEdge}>Edit</Item>
+                <Item onClick={openModalToEditEdge}>Change Date</Item>
             </Menu>
             <div ref={containerRef} key={jobOfferId} style={{ width: '450px', height: '400px' }} />
         </div>
