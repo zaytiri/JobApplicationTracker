@@ -474,7 +474,7 @@ public class JobOfferController {
             getJOSOperationRequest.setFilters(filters);
             getJOSOperationRequest.setOrderByColumn(new Pair<>(Order.DESCENDING.value, DatabaseShema.getINSTANCE().changedAtColumnName));
 
-            List<JobOfferStatus> jobOfferStatuses = new JobOfferStatusMapperImpl().toEntity(getOperation.execute(getOperationRequest), false);
+            List<JobOfferStatus> jobOfferStatuses = new JobOfferStatusMapperImpl().toEntity(getJOSOperation.execute(getJOSOperationRequest), false);
 
             for (JobOfferStatus jos : jobOfferStatuses){
                 int currentNumberOfJobOffers = statistics.getOrDefault(jos.getStatusId(), 0);
