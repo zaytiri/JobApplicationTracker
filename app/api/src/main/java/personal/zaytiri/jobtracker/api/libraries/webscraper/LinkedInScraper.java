@@ -20,18 +20,32 @@ public class LinkedInScraper extends WebScraper {
 
         final HtmlPage page = webClient.getPage(url);
 
-        final HtmlHeading1 jobRole = (HtmlHeading1) page.getByXPath("//h1[@class='top-card-layout__title font-sans text-lg papabear:text-xl font-bold leading-open text-color-text mb-0 topcard__title']").get(0);
-        scrapedJobOffer.setRole(jobRole.getFirstChild().getNodeValue().trim());
+        var numberOfRetries = 3;
+        var retryCounter = 0;
+        while(retryCounter <= numberOfRetries){
+            try{
+                final HtmlHeading1 jobRole = (HtmlHeading1) page.getByXPath("//h1[@class='top-card-layout__title font-sans text-lg papabear:text-xl font-bold leading-open text-color-text mb-0 topcard__title']").get(0);
+                scrapedJobOffer.setRole(jobRole.getFirstChild().getNodeValue().trim());
 
-        final HtmlAnchor jobCompany = (HtmlAnchor) page.getByXPath("//a[@class='topcard__org-name-link topcard__flavor--black-link']").get(0);
-        scrapedJobOffer.setCompany(jobCompany.getFirstChild().getNodeValue().trim());
+                final HtmlAnchor jobCompany = (HtmlAnchor) page.getByXPath("//a[@class='topcard__org-name-link topcard__flavor--black-link']").get(0);
+                scrapedJobOffer.setCompany(jobCompany.getFirstChild().getNodeValue().trim());
 
-        final HtmlSpan jobLocation = (HtmlSpan) page.getByXPath("//span[@class='topcard__flavor topcard__flavor--bullet']").get(0);
-        scrapedJobOffer.setLocation(jobLocation.getFirstChild().getNodeValue().trim());
+                final HtmlSpan jobLocation = (HtmlSpan) page.getByXPath("//span[@class='topcard__flavor topcard__flavor--bullet']").get(0);
+                scrapedJobOffer.setLocation(jobLocation.getFirstChild().getNodeValue().trim());
 
-        final HtmlDivision description = (HtmlDivision) page.getByXPath("//div[@class='show-more-less-html__markup show-more-less-html__markup--clamp-after-5\n" +
-                "            relative overflow-hidden']").get(0);
-        scrapedJobOffer.setDescription(getAllTextContent(description));
+                final HtmlDivision description = (HtmlDivision) page.getByXPath("//div[@class='show-more-less-html__markup show-more-less-html__markup--clamp-after-5\n" +
+                        "            relative overflow-hidden']").get(0);
+                scrapedJobOffer.setDescription(getAllTextContent(description));
+                break;
+            }
+            catch (IndexOutOfBoundsException e){
+                retryCounter++;
+            }
+        }
+
+        if(retryCounter == numberOfRetries){
+            throw new IOException("Malformed HTML.");
+        }
 
         return scrapedJobOffer;
     }

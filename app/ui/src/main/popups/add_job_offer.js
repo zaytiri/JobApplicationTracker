@@ -74,6 +74,8 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
                 error_message += "This link is not supported by the feature. Only works for LinkedIn, GlassDoor ad Xing platforms. For more information on the URL structure, see the Github README.md on 'Auto fill feature' section."
             } else if (response.error_id === 2) {
                 error_message += "The request was denied by the platform (429 HTTP error code). Try again later."
+            } else if (response.error_id === 3) {
+                error_message += "The server could not find a match for the provided URL. If this error persists after many attempts please open an issue on Github."
             }
 
             toast.error(error_message, {
@@ -200,6 +202,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
                                     p="10px"
                                 />
                                 <Input value={link} onChange={(event) => linkHandleChange(event.target.value)} placeholder='www.job-offer-for-google-from-linkedin.com' />
+                                <Button onClick={() => linkHandleChange(link)}>Try Again</Button>
                             </Flex>
                         </FormControl>
                         <Divider mt='10px' mb='10px' />

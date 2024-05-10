@@ -268,6 +268,8 @@ public class JobOfferController {
 
             if(e.getMessage().contains("429")){
                 obj.put("error_id", 2);
+            } else if(e.getMessage().contains("Malformed HTML.")){
+                obj.put("error_id", 3);
             }
 
             return Response.ok().entity(obj).build();
