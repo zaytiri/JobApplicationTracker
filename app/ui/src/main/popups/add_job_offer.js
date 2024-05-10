@@ -20,6 +20,7 @@ import {
     Switch,
     Divider,
     Spinner,
+    Text,
 
 } from "@chakra-ui/react";
 
@@ -47,6 +48,14 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
     const [applied, setApplied] = useState(false)
     const [statusId, setStatusId] = useState(0)
 
+    const setCompanyWithCharacterLimitation = (value) => {
+        if(value.length > 21 ){
+            return
+        }
+
+        setCompany(value);
+    }
+
     const linkHandleChange = async (event) => {
         const url = event.target.value;
         setLink(url);
@@ -58,7 +67,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
         try {
             response = await scrape(url);
 
-            setCompany(response.company);
+            setCompanyWithCharacterLimitation(response.company);
             setRole(response.role);
             setLocation(response.location);
             setDescription(response.description);
@@ -131,7 +140,7 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
     }, [isOpen]);
 
     const resetModal = () => {
-        setCompany('');
+        setCompanyWithCharacterLimitation('');
         setRole('');
         setLocation('');
         setDescription('');
@@ -189,7 +198,8 @@ export const AddJobOffer = ({ setFetchDataAgain }) => {
                             gap='20px'>
                             <FormControl>
                                 <FormLabel>Company</FormLabel>
-                                <Input value={company} onChange={(event) => setCompany(event.target.value)} ref={initialRef} placeholder='Google' />
+                                <Input value={company} onChange={(event) => setCompanyWithCharacterLimitation(event.target.value)} ref={initialRef} placeholder='Google' />
+                                <Text color='gray' fontSize='xs'>Maximum of 21 characters.</Text>
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Role</FormLabel>

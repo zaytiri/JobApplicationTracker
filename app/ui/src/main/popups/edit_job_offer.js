@@ -20,6 +20,7 @@ import {
     Divider,
     Flex,
     Tooltip,
+    Text,
 } from "@chakra-ui/react";
 
 import {
@@ -48,6 +49,14 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
     const [statusId, setStatusId] = useState(0)
     const [appliedAt, setAppliedAt] = useState(new Date())
     const [notes, setNotes] = useState('')
+
+    const setCompanyWithCharacterLimitation = (value) => {
+        if(value.length > 21 ){
+            return
+        }
+
+        setCompany(value);
+    }
 
     const editJobOffer = async () => {
         const obj =
@@ -107,7 +116,7 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
     }, [isOpen]);
 
     const setModalInformation = () => {
-        setCompany(currentJobOffer.company);
+        setCompanyWithCharacterLimitation(currentJobOffer.company);
         setRole(currentJobOffer.role);
         setLocation(currentJobOffer.location);
         setDescription(currentJobOffer.description);
@@ -180,7 +189,8 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
                             gap='20px'>
                             <FormControl>
                                 <FormLabel>Company</FormLabel>
-                                <Input value={company} onChange={(event) => setCompany(event.target.value)} ref={initialRef} placeholder='Google' />
+                                <Input value={company} onChange={(event) => setCompanyWithCharacterLimitation(event.target.value)} ref={initialRef} placeholder='Google' />
+                                <Text color='gray' fontSize='xs'>Maximum of 21 characters.</Text>
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Role</FormLabel>
