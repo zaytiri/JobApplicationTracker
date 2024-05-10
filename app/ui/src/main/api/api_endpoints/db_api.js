@@ -13,5 +13,7 @@ const headers = {
 export const checkMigration = async function() {
   return await axios.get(baseUrl + "check-migration", headers).then((response) => {
     return response.data;
+  }).catch((error) =>{
+    return error
   });
 };

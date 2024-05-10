@@ -13,11 +13,15 @@ const headers = {
 export const get = async function() {
   return await axios.post(baseUrl + "get", headers).then((response) => {
     return response.data[0];
+  }).catch((error) =>{
+    return error
   });
 };
 
 export const update = async function(settings) {
   return await axios.put(baseUrl + "update/1", settings, headers).then((response) => {
     return response.data;
+  }).catch((error) =>{
+    return error
   });
 };
