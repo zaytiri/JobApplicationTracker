@@ -11,7 +11,6 @@ import personal.zaytiri.jobtracker.api.database.requests.FindByTextOperationRequ
 import personal.zaytiri.jobtracker.api.database.requests.GetOperationRequest;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOffer;
 import personal.zaytiri.jobtracker.api.domain.entities.JobOfferStatus;
-import personal.zaytiri.jobtracker.api.domain.entities.Settings;
 import personal.zaytiri.jobtracker.api.domain.entities.Status;
 import personal.zaytiri.jobtracker.api.libraries.Jackson;
 import personal.zaytiri.jobtracker.api.libraries.webscraper.WebScraper;
@@ -378,6 +377,7 @@ public class JobOfferController {
         stats.addStatistic(new TotalAppliedJobsByDay());
         stats.addStatistic(new TotalAppliedJobs());
         stats.addStatistic(new TotalJobs());
+        stats.addStatistic(new TotalJobsByLatestStatus());
         stats.addStatistic(new TotalJobsByStatus());
 
         Map<String, List<IStatistic<JobOffer>>> calculatedStats = stats.process();
