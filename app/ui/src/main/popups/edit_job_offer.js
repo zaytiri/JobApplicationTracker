@@ -171,7 +171,7 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
                     <ModalBody pb={6}>
                         <FormControl>
                             <FormLabel>Job Offer URL</FormLabel>
-                            <Input value={link} placeholder='www.job-offer-for-google-from-linkedin.com' />
+                            <Input value={link} onChange={(event) => setLink(event.target.value)} placeholder='www.job-offer-for-google-from-linkedin.com' />
                         </FormControl>
                         <Divider mt='10px' mb='10px' />
                         <Grid
