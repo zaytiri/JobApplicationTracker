@@ -28,7 +28,7 @@ import {
 
 import { update } from "../api/api_endpoints/job_offer_api.js"
 import { get } from "../api/api_endpoints/status_api.js"
-import { toast } from "react-toastify";
+import { Zoom, toast } from "react-toastify";
 
 export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
