@@ -76,7 +76,20 @@ export const EditJobOffer = ({ currentJobOffer, setFetchDataAgain, closeModal })
 
         const response = await update(currentJobOffer.id, obj);
 
-        if (response.success === false) return null;
+        if (response.success === false) {
+            toast.error('Something went wrong.', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Zoom,
+            });
+            return null
+        }
 
         setFetchDataAgain(true)
         onClose();
