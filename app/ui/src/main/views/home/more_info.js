@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // Chakra imports
 import {
   Flex,
@@ -36,8 +36,9 @@ import CardHeader from "../../template/components/Card/CardHeader.js";
 import { updateJobStatus, remove } from "../../api/api_endpoints/job_offer_api.js"
 import { StatusGraph } from "./graph_view.js";
 import { EditJobOffer } from "../../popups/edit_job_offer.js";
+import { StatusDropdown } from "../../popups/status_dropdown.js";
 
-export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle, isOpen, setFetchDataAgain }) => {
+export const MoreInfo = ({ statuses, currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle, isOpen, setFetchDataAgain }) => {
   const textColor = useColorModeValue("gray.700", "white");
 
   const formatDescription = (text) => {
@@ -63,6 +64,8 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   const [showGraph, setShowGraph] = useState(false)
   const handleToggleToShowGraph = () => setShowGraph(!showGraph)
 
+  const [currentStatusMoreInfo, setCurrentStatusMoreInfo] = useState([])
+
   const removeJobOffer = async (id) => {
     const response = await remove(id);
 
@@ -85,12 +88,18 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
   }
 
   const hexToRgb = (hex) => {
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    if (hex === undefined) return { r, g, b };
+
     hex = hex.replace(/^#/, '');
 
     const bigint = parseInt(hex, 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
+    r = (bigint >> 16) & 255;
+    g = (bigint >> 8) & 255;
+    b = bigint & 255;
 
     return { r, g, b };
   }
@@ -134,41 +143,45 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
     setLoading(true)
 
     await updateJobStatus(currentJobOffer.id)
-    .then((res) => {
-      if(res.success === false) {
-        setLoading(false)
-        return null;
-      }
+      .then((res) => {
+        if (res.success === false) {
+          setLoading(false)
+          return null;
+        }
 
-      onToggle();
-      setFetchDataAgain(true)
-      
-      setLoading(false)
-    })
+        onToggle();
+        setFetchDataAgain(true)
+
+        setLoading(false)
+      })
   }
+
+  useEffect(() => {
+    setCurrentStatusMoreInfo(currentStatus)
+  }, []);
 
   return (
     <Card p='15px' maxW={{ sm: "320px", md: "100%" }} h="100%" w='100%'>
       <CardHeader mb={{ base: "0px", lg: "20px" }} align='center'>
         <Box
-          bgColor={hexToRgba(currentStatus === undefined ? '#FFFFFF' : currentStatus.color, 0.2)}
+          bgColor={hexToRgba(currentStatusMoreInfo === undefined ? '#FFFFFF' : currentStatusMoreInfo.color, 0.2)}
           borderRadius='16px'
           h='160px'
           w='100%'
           boxShadow='0px 7px 18px 3px rgba(0, 0, 0, 0.2)'
         >
-          <Progress 
+          <Progress
             display={loading ? 'block' : 'none'}
             align="center"
             thickness='4px'
             speed='0.65s'
             color='blue.500'
-            size='xs' 
+            size='xs'
             isIndeterminate />
           <Flex p='10px' alignItems='center'>
             <Spacer />
             <Tooltip label='Click here to check updates from the current job application.'>
-              <RepeatIcon boxSize={5} color="black.500" onClick={checkJobUpdates}/>
+              <RepeatIcon boxSize={5} color="black.500" onClick={checkJobUpdates} />
             </Tooltip>
             <Spacer />
             <EditJobOffer
@@ -206,15 +219,11 @@ export const MoreInfo = ({ currentJobOffer, currentStatus, jobOffers, setJobOffe
           <Text fontSize='lg' color={textColor} >
             {currentJobOffer.role}
           </Text>
-          <Badge
-            bg={currentStatus === undefined ? 'white' : currentStatus.color}
-            color="black"
-            fontSize="16px"
-            borderRadius="8px"
-          >
-            {currentStatus !== undefined && currentStatus.name}
-            {currentStatus === undefined && 'No Status'}
-          </Badge>
+          <StatusDropdown
+            statuses={statuses}
+            currentStatus={currentStatusMoreInfo}
+            setCurrentStatus={setCurrentStatusMoreInfo}
+            currentJobOffer={currentJobOffer} />
         </Flex>
       </CardHeader>
 
