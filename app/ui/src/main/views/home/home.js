@@ -16,7 +16,10 @@ import {
   Spinner,
   Center,
 } from "@chakra-ui/react";
-// Custom components
+
+import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { useTable, useSortBy } from "react-table";
+
 import Card from "../../template/components/Card/Card.js";
 import CardBody from "../../template/components/Card/CardBody.js";
 import CardHeader from "../../template/components/Card/CardHeader.js";
@@ -48,6 +51,57 @@ export const Home = () => {
 
   const [loadingAllJobsUpdate, setLoadingAllJobsUpdate] = useState(false)
   const [loadingAllJobs, setLoadingAllJobs] = useState(true)
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Company",
+        accessor: "company",
+      },
+      {
+        Header: "Role",
+        accessor: "role",
+      },
+      {
+        Header: "Location",
+        accessor: "location",
+      },
+      {
+        Header: "Applied At",
+        accessor: "appliedAt",
+        sortType: (rowA, rowB, columnId) => {
+          // Custom sorting function for the appliedAt column
+          const valueA = new Date(rowA.original.appliedAt[0], rowA.original.appliedAt[1] - 1, rowA.original.appliedAt[2], rowA.original.appliedAt[3], rowA.original.appliedAt[4], 0);
+          const valueB = new Date(rowB.original.appliedAt[0], rowB.original.appliedAt[1] - 1, rowB.original.appliedAt[2], rowB.original.appliedAt[3], rowB.original.appliedAt[4], 0);
+
+          return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+        }
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+      },
+      {
+        Header: "",
+        accessor: "action",
+      },
+    ],
+    []
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable(
+    {
+      columns,
+      data: jobOffers, // Pass your data here
+    },
+    useSortBy
+  );
 
   const moreAction = (id) => {
     setCurrentJobOffer(jobOffers.find((jobOffer) => { return jobOffer.id === id }));
@@ -164,52 +218,69 @@ export const Home = () => {
                 Job Applications
               </Text>
               <Spinner
-                        display={loadingAllJobs ? 'block' : 'none'}
-                        align="center"
-                        thickness='4px'
-                        speed='0.65s'
-                        emptyColor='gray.200'
-                        color='blue.500'
-                        size='md'
-                        p="10px"
-                      />
+                display={loadingAllJobs ? 'block' : 'none'}
+                align="center"
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='blue.500'
+                size='md'
+                p="10px"
+              />
             </Flex>
           </CardHeader>
           <CardBody>
-          
-            <Table variant="simple" color={textColor}>
+
+            <Table variant="simple" color={textColor} {...getTableProps()}>
               <Thead>
-                <Tr my=".8rem" pl="0px" color="gray.400" >
-                  <Th pl="0px" borderColor={borderColor} color="gray.400" >
-                    Company
-                  </Th>
-                  <Th borderColor={borderColor} color="gray.400" >Role</Th>
-                  <Th borderColor={borderColor} color="gray.400" >Location</Th>
-                  <Th borderColor={borderColor} color="gray.400" >Applied At</Th>
-                  <Th borderColor={borderColor} color="gray.400" >Status</Th>
-                  <Th borderColor={borderColor}></Th>
-                </Tr>
+                {headerGroups.map((headerGroup) => (
+                  <Tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column) => (
+                      <Th
+                        pl="0px"
+                        borderColor={borderColor}
+                        {...column.getHeaderProps(column.getSortByToggleProps())}
+                      >
+                        <Flex alignItems="center">
+                          <Text>{column.render("Header")}</Text>
+                          {/* Add sorting indicators */}
+                          {column.isSorted ? (
+                            column.isSortedDesc ? (
+                              <ChevronDownIcon ml={1} w={4} h={4} />
+                            ) : (
+                              <ChevronUpIcon ml={1} w={4} h={4} />
+                            )
+                          ) : (
+                            ""
+                          )}
+                        </Flex>
+                      </Th>
+                    ))}
+                  </Tr>
+                ))}
               </Thead>
-              <Tbody>
-                {jobOffers?.length > 0 && jobOffers.map((row, index) => {
+              <Tbody {...getTableBodyProps()}>
+                {rows?.length > 0 && rows.map((row, index) => {
+                  prepareRow(row);
                   return (
                     <JobApplicationTableRow
-                      company={row.company}
-                      role={row.role}
-                      location={row.location}
-                      status={getStatusById(row.statusId)}
-                      applied={row.appliedAt}
-                      moreAction={() => moreAction(row.id)}
+                      // Pass props to your JobApplicationTableRow component
+                      company={row.original.company}
+                      role={row.original.role}
+                      location={row.original.location}
+                      status={getStatusById(row.original.statusId)}
+                      applied={row.original.appliedAt}
+                      moreAction={() => moreAction(row.original.id)}
                       isLast={index === jobOffers.length - 1 ? true : false}
                       key={index}
                     />
                   );
                 })}
-                {jobOffers?.length === 0 &&
+                {rows?.length === 0 &&
                   <Tr style={{ textAlign: 'center' }}>
-                      <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
-                        No Job Applications added yet.
-                      </Text>
+                    <Text fontSize='md' color='gray.400' fontWeight='400' p="15px">
+                      No Job Applications added yet.
+                    </Text>
                   </Tr>
                 }
               </Tbody>
