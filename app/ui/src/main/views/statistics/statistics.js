@@ -16,6 +16,7 @@ import {
     Text,
     Th,
     Thead,
+    Tooltip,
     Tr,
     useColorMode,
     useColorModeValue,
@@ -42,6 +43,7 @@ import {
 } from "../../template/variables/charts";
 
 import { getStatistics } from "../../api/api_endpoints/job_offer_api.js";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 
 export const Statistics = () => {
     // Chakra Color Mode
@@ -105,7 +107,7 @@ export const Statistics = () => {
                             align='center'
                             justify='center'
                             w='100%'
-                            >
+                        >
                             <Stat me='0px' mb='0px'>
                                 <StatLabel
                                     fontSize='xs'
@@ -130,7 +132,7 @@ export const Statistics = () => {
                             align='center'
                             justify='center'
                             w='100%'
-                            >
+                        >
                             <Stat me='0px' mb='0px'>
                                 <StatLabel
                                     fontSize='xs'
@@ -155,7 +157,7 @@ export const Statistics = () => {
                             align='center'
                             justify='center'
                             w='100%'
-                            >
+                        >
                             <Stat me='0px' mb='0px'>
                                 <StatLabel
                                     fontSize='xs'
@@ -178,13 +180,13 @@ export const Statistics = () => {
                                     : calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth') > 0
                                         ? 'green.400'
                                         : 'gray.400'} fontWeight='bold'>
-                                
+
                             </Text>
                             {
                                 calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth') === 0 ?
-                                "Same as "
-                                :
-                                calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth') + " Since "
+                                    "Same as "
+                                    :
+                                    calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth') + " Since "
                             }
                             last month ({monthNames[new Date().getMonth() - 1]})
                         </Text>
@@ -233,19 +235,39 @@ export const Statistics = () => {
                                 <Spacer />
                                 <Button mr='5px' size='md' onClick={() => setToggleBarChartStatistics(!toggleBarChartStatistics)}>
                                     <Text fontSize='10px' mb='0'>
-                                    Switch to Chart by <br/> {toggleBarChartStatistics ? "Latest" : ""} Status
+                                        Switch to Chart by <br /> {
+                                        toggleBarChartStatistics ? "" : "Latest "} Status
                                     </Text>
                                 </Button>
                             </Flex>
                             <Text color={textColor} fontSize='lg' fontWeight='bold'>
-                                by {toggleBarChartStatistics ? "" : "Latest"} Status
+                                by {
+                                toggleBarChartStatistics ?
+                                <Flex gap='2px'>
+                                    <Text>
+                                        Latest Status
+                                    </Text>
+                                    <Tooltip label='"Latest Status" shows only the number of jobs per their current/latest status.'>
+                                        <QuestionOutlineIcon />
+                                    </Tooltip>
+                                </Flex>
+                                :
+                                <Flex gap='2px'>
+                                    <Text>
+                                        Status
+                                    </Text>
+                                    <Tooltip label='"Status" shows all the jobs that had each status at one point in time.'>
+                                        <QuestionOutlineIcon />
+                                    </Tooltip>
+                                </Flex>
+                            }
                             </Text>
                         </Flex>
 
-                        <Box minH='300px' display={!toggleBarChartStatistics ? "block" : "none"}>
+                        <Box minH='300px' display={toggleBarChartStatistics ? "block" : "none"}>
                             <BarChart chartData={barChartData(statistics['TotalJobsByLatestStatus'])} chartOptions={barChartOptions(statistics['TotalJobsByLatestStatus'])} />
                         </Box>
-                        <Box minH='300px' display={toggleBarChartStatistics ? "block" : "none"}>
+                        <Box minH='300px' display={!toggleBarChartStatistics ? "block" : "none"}>
                             <BarChart chartData={barChartData(statistics['TotalJobsByStatus'])} chartOptions={barChartOptions(statistics['TotalJobsByStatus'])} />
                         </Box>
                     </Card>
