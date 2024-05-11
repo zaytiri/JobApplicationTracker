@@ -36,7 +36,7 @@ import CardHeader from "../../template/components/Card/CardHeader.js";
 import { updateJobStatus, remove } from "../../api/api_endpoints/job_offer_api.js"
 import { StatusGraph } from "./graph_view.js";
 import { EditJobOffer } from "../../popups/edit_job_offer.js";
-import { StatusDropdown } from "../../popups/status_dropdown.js";
+import { EditStatusDropdown } from "../../popups/edit_status_dropdown.js";
 
 export const MoreInfo = ({ statuses, currentJobOffer, currentStatus, jobOffers, setJobOffers, onToggle, isOpen, setFetchDataAgain }) => {
   const textColor = useColorModeValue("gray.700", "white");
@@ -65,8 +65,8 @@ export const MoreInfo = ({ statuses, currentJobOffer, currentStatus, jobOffers, 
   const handleToggleToShowGraph = () => setShowGraph(!showGraph)
 
   const [currentStatusMoreInfo, setCurrentStatusMoreInfo] = useState([])
-  const handleToggleToUpdateCurrentStatus = () => {
-    setCurrentStatusMoreInfo(currentStatus)
+  const handleToggleToUpdateCurrentStatus = (status) => {
+    setCurrentStatusMoreInfo(status)
     setShowGraph(false)
   }
 
@@ -223,7 +223,7 @@ export const MoreInfo = ({ statuses, currentJobOffer, currentStatus, jobOffers, 
           <Text fontSize='lg' color={textColor} >
             {currentJobOffer.role}
           </Text>
-          <StatusDropdown
+          <EditStatusDropdown
             statuses={statuses}
             currentStatus={currentStatusMoreInfo}
             setCurrentStatus={handleToggleToUpdateCurrentStatus}
