@@ -76,6 +76,7 @@ export const Statistics = () => {
     }, [fetchDataAgain]);
 
     const calculateDifferenceBetweenLastAndCurrentMonth = (stat) => {
+        console.log(statistics)
         if (statistics[stat] === undefined) {
             return null;
         }
@@ -213,9 +214,15 @@ export const Statistics = () => {
                                     : calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth') > 0
                                         ? 'green.400'
                                         : 'gray.400'} fontWeight='bold'>
-                                {calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth')}{" "}
+                                
                             </Text>
-                            Since last month ({monthNames[new Date().getMonth() - 1]})
+                            {
+                                calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth') === 0 ?
+                                "Same as "
+                                :
+                                calculateDifferenceBetweenLastAndCurrentMonth('TotalAppliedJobsByMonth') + " Since "
+                            }
+                            last month ({monthNames[new Date().getMonth() - 1]})
                         </Text>
                     </Flex>
                 </Card>
