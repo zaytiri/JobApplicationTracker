@@ -97,16 +97,16 @@ export const Statistics = () => {
 
     return (
         <Flex flexDirection='column' pt={{ base: "120px", md: "75px" }}>
-            <SimpleGrid columns={{ sm: 1, md: 2, xl: 3 }} spacing='24px' mb='20px'>
-                <Card minH='125px'>
+            <SimpleGrid columns={{ sm: 1, md: 3, xl: 3 }} spacing='24px' mb='20px'>
+                <Card >
                     <Flex direction='column'>
                         <Flex
                             flexDirection='row'
                             align='center'
                             justify='center'
                             w='100%'
-                            mb='25px'>
-                            <Stat me='auto'>
+                            >
+                            <Stat me='0px' mb='0px'>
                                 <StatLabel
                                     fontSize='xs'
                                     color='gray.400'
@@ -115,37 +115,23 @@ export const Statistics = () => {
                                     Total Job Applications
                                 </StatLabel>
                                 <Flex>
-                                    <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
+                                    <StatNumber fontSize='50px' color={textColor} fontWeight='bold' mb='0px'>
                                         {statistics['TotalJobs'] !== undefined ? statistics['TotalJobs'][0].numberOfJobs : 0}
                                     </StatNumber>
                                 </Flex>
                             </Stat>
-                            <IconBox
-                                borderRadius='50%'
-                                as='box'
-                                h={"45px"}
-                                w={"45px"}
-                                bg={iconBlue}>
-                                <WalletIcon h={"24px"} w={"24px"} color={iconBoxInside} />
-                            </IconBox>
                         </Flex>
-                        {/* <Text color='gray.400' fontSize='sm'>
-                            <Text as='span' color='green.400' fontWeight='bold'>
-                                +3.48%{" "}
-                            </Text>
-                            Since last month
-                        </Text> */}
                     </Flex>
                 </Card>
-                <Card minH='125px'>
+                <Card >
                     <Flex direction='column'>
                         <Flex
                             flexDirection='row'
                             align='center'
                             justify='center'
                             w='100%'
-                            mb='25px'>
-                            <Stat me='auto'>
+                            >
+                            <Stat me='0px' mb='0px'>
                                 <StatLabel
                                     fontSize='xs'
                                     color='gray.400'
@@ -154,37 +140,23 @@ export const Statistics = () => {
                                     Total Applied Job Applications
                                 </StatLabel>
                                 <Flex>
-                                    <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
+                                    <StatNumber fontSize='50px' color={textColor} fontWeight='bold' mb='0px'>
                                         {statistics['TotalAppliedJobs'] !== undefined ? statistics['TotalAppliedJobs'][0].numberOfAppliedJobs : 0}
                                     </StatNumber>
                                 </Flex>
                             </Stat>
-                            <IconBox
-                                borderRadius='50%'
-                                as='box'
-                                h={"45px"}
-                                w={"45px"}
-                                bg={iconBlue}>
-                                <GlobeIcon h={"24px"} w={"24px"} color={iconBoxInside} />
-                            </IconBox>
                         </Flex>
-                        {/* <Text color='gray.400' fontSize='sm'>
-                            <Text as='span' color='green.400' fontWeight='bold'>
-                                +5.2%{" "}
-                            </Text>
-                            Since last month
-                        </Text> */}
                     </Flex>
                 </Card>
-                <Card minH='125px'>
+                <Card >
                     <Flex direction='column'>
                         <Flex
                             flexDirection='row'
                             align='center'
                             justify='center'
                             w='100%'
-                            mb='25px'>
-                            <Stat me='auto'>
+                            >
+                            <Stat me='0px' mb='0px'>
                                 <StatLabel
                                     fontSize='xs'
                                     color='gray.400'
@@ -193,19 +165,11 @@ export const Statistics = () => {
                                     Total Applied Jobs this Month ({monthNames[new Date().getMonth()]})
                                 </StatLabel>
                                 <Flex>
-                                    <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
+                                    <StatNumber fontSize='50px' color={textColor} fontWeight='bold' mb='0px'>
                                         {statistics['TotalAppliedJobsByMonth'] !== undefined ? statistics['TotalAppliedJobsByMonth'][new Date().getMonth()].numberOfJobs : 0}
                                     </StatNumber>
                                 </Flex>
                             </Stat>
-                            <IconBox
-                                borderRadius='50%'
-                                as='box'
-                                h={"45px"}
-                                w={"45px"}
-                                bg={iconBlue}>
-                                <CartIcon h={"24px"} w={"24px"} color={iconBoxInside} />
-                            </IconBox>
                         </Flex>
                         <Text color='gray.400' fontSize='sm'>
                             <Text as='span' color={
