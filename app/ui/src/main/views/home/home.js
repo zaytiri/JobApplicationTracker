@@ -15,6 +15,9 @@ import {
   Tooltip,
   Spinner,
   Center,
+  Button,
+  Select,
+  border,
 } from "@chakra-ui/react";
 
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
@@ -33,7 +36,7 @@ import { MoreInfo } from "./more_info.js";
 import { ManageJobStatus } from "../../popups/manage_job_status.js";
 import { SearchBar } from "../../template/components/Navbars/SearchBar/SearchBar.js";
 import { RepeatIcon } from "@chakra-ui/icons";
-import { SankeymaticFeature } from "../../popups/sankeymatic_button.js";
+import { StatusDropdown } from "../../popups/status_dropdown.js";
 
 export const Home = () => {
   const textColor = useColorModeValue("gray.700", "white");
@@ -165,6 +168,22 @@ export const Home = () => {
     setLoadingAllJobsUpdate(false)
   }
 
+  const [currentStatusId, setCurrentStatusId] = useState(0)
+
+  const showOnlyStatus = (id) => {
+    if(id === 0){
+      clearFilters()
+      return
+    }
+    setCurrentStatusId(id)
+    setJobOffers(originalJobOffers.filter(jo => jo.statusId === Number(id)))
+  }
+
+  const clearFilters = () => {
+    setCurrentStatusId(0)
+    setJobOffers(originalJobOffers)
+  }
+
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }} >
       <Flex
@@ -200,12 +219,39 @@ export const Home = () => {
           </Tooltip>}
         {/* <SankeymaticFeature/>  */}
         <Spacer />
-        <SearchBar me='18px' findText={findText} />
-
         <AddJobOffer setFetchDataAgain={setFetchDataAgain} />
-
         <ManageJobStatus />
+      </Flex>
 
+      <Flex
+        direction={{ sm: "column", md: "row" }}
+        mb='24px'
+        maxH='330px'
+        backdropFilter='blur(21px)'
+        boxShadow='0px 2px 5.5px rgba(0, 0, 0, 0.02)'
+        border='1.5px solid'
+        borderColor={borderProfileColor}
+        bg={bgProfile}
+        p='24px'
+        borderRadius='20px'
+        gap='20px'
+        alignItems='center'>
+        <SearchBar me='18px' findText={findText} />
+        
+        <Select fontSize='xs' bgColor='white' width='20%' onChange={(event) => showOnlyStatus(event.target.value)} placeholder='Select Status to filter by' value={currentStatusId}>
+          {status?.length > 0 && status.map((row) => {
+            return (
+              <option value={row.id}>{row.name}</option>
+            )
+          })}
+        </Select>
+
+        <Spacer />
+        <Flex justifyContent='right'>
+          <Button variant='primary' onClick={clearFilters}>
+            Clear Filters
+          </Button>
+        </Flex>
       </Flex>
       <Grid
         templateColumns={{ sm: "1fr", lg: `${hidden ? "1fr" : "2fr 1fr"}` }}
@@ -237,7 +283,6 @@ export const Home = () => {
                   <Tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map((column) => (
                       <Th
-                        pl="0px"
                         borderColor={borderColor}
                         {...column.getHeaderProps(column.getSortByToggleProps())}
                       >
