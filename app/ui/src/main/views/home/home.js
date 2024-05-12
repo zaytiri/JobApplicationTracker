@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 // Chakra imports
 import {
   Flex,
@@ -106,14 +106,31 @@ export const Home = () => {
     useSortBy
   );
 
+  const componentRef = useRef(null);
+  const [scrollToTop, setScrollToTop] = useState(false);
+
+  useLayoutEffect(() => {
+    if (scrollToTop && componentRef.current) {
+      componentRef.current.scrollIntoView({ behavior: 'smooth' });
+      setScrollToTop(false); // Reset the state after scrolling
+    }
+  }, [scrollToTop, componentRef.current]);
+
   const moreAction = (id) => {
     setCurrentJobOffer(jobOffers.find((jobOffer) => { return jobOffer.id === id }));
 
     if (!isOpen) {
       onToggle();
+      setTimeout(() => {
+        setScrollToTop(true)
+      }, 100);
     } else {
       if (id === currentJobOffer.id) {
         onToggle();
+      } else {
+        setTimeout(() => {
+          setScrollToTop(true)
+        }, 100);
       }
     }
   }
@@ -171,7 +188,7 @@ export const Home = () => {
   const [currentStatusId, setCurrentStatusId] = useState(0)
 
   const showOnlyStatus = (id) => {
-    if(id === 0){
+    if (id === 0) {
       clearFilters()
       return
     }
@@ -237,7 +254,7 @@ export const Home = () => {
         gap='20px'
         alignItems='center'>
         <SearchBar me='18px' findText={findText} />
-        
+
         <Select fontSize='xs' bgColor='white' width='20%' onChange={(event) => showOnlyStatus(event.target.value)} placeholder='Select Status to filter by' value={currentStatusId}>
           {status?.length > 0 && status.map((row) => {
             return (
@@ -344,6 +361,7 @@ export const Home = () => {
             whiteSpace: 'nowrap',
             position: 'relative',
           }}
+          ref={componentRef}
         >
           <MoreInfo
             key={currentJobOffer.id}
