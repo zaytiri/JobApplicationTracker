@@ -49,7 +49,6 @@ export const EditStatusDropdown = ({ statuses, currentStatus, setCurrentStatus, 
             statuses={statuses}
             currentStatus={currentStatus}
             setCurrentStatus={setCurrentStatus}
-            currentJobOffer={currentJobOffer}
             doActionOnItemChosen={editStatus}
         />
     )
